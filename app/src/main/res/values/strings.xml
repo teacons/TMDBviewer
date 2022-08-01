@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">TMDBviewer</string>
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="profile">Profile</string>
+    <string name="movies">Movies</string>
+    <string name="tv">TV</string>
+    <string name="connection_error">Connection error</string>
+</resources>
