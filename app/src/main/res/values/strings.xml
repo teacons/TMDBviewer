@@ -6,4 +6,11 @@
     <string name="movies">Movies</string>
     <string name="tv">TV</string>
     <string name="connection_error">Connection error</string>
+    <string name="year">Year</string>
+    <string name="runtime">Runtime</string>
+    <string name="genres">Genres</string>
+    <string name="overview">Overview</string>
+    <string name="cast">Cast</string>
+    <string name="hours">h</string>
+    <string name="minutes">m</string>
 </resources>

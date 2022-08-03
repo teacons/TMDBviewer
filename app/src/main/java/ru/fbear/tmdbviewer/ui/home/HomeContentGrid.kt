@@ -6,11 +6,11 @@ import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ru.fbear.tmdbviewer.ListEntry
+import ru.fbear.tmdbviewer.HomeGridEntry
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 
 @Composable
-fun HomeContentGrid(listItems: List<ListEntry>, onLoadMore: () -> Unit) {
+fun HomeContentGrid(listItems: List<HomeGridEntry>, onLoadMore: () -> Unit) {
     val gridState = rememberLazyGridState()
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
@@ -76,7 +76,7 @@ fun LazyGridState.OnBottomReached(
 @Composable
 fun HomeContentGridPreview() {
     val items = List(15) {
-        object : ListEntry {
+        object : HomeGridEntry {
             override val posterPath: String? = null
             override val name = "Movie $it"
         }

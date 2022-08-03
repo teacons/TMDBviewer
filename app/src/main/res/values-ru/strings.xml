@@ -7,4 +7,11 @@
     <string name="tv">Сериалы</string>
     <string name="home">Рекомендации</string>
     <string name="connection_error">Ошибка подключения</string>
+    <string name="year">Год</string>
+    <string name="runtime">Продолжительность</string>
+    <string name="genres">Жанры</string>
+    <string name="overview">Описание</string>
+    <string name="cast">Актерский состав</string>
+    <string name="hours">ч</string>
+    <string name="minutes">м</string>
 </resources>

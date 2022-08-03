@@ -40,9 +40,22 @@ data class PopularTVResponse(
     val totalPages: Int
 )
 
-interface ListEntry {
+interface HomeGridEntry {
     val posterPath: String?
     val name: String
+}
+
+interface SearchListEntry {
+    val posterPath: String?
+    val name: String
+    val voteAverage: Float
+}
+
+interface DetailsEntry {
+    val name: String
+    val releaseDate: String
+
+    val posterPath: String?
 }
 
 data class MoviesListEntry(
@@ -68,8 +81,8 @@ data class MoviesListEntry(
     val voteCount: Int,
     val video: Boolean,
     @SerializedName("vote_average")
-    val voteAverage: Float
-) : ListEntry
+    override val voteAverage: Float
+) : HomeGridEntry, SearchListEntry
 
 data class TVListEntry(
     @SerializedName("poster_path")
@@ -79,7 +92,7 @@ data class TVListEntry(
     @SerializedName("backdrop_path")
     val backdropPath: String?,
     @SerializedName("vote_average")
-    val voteAverage: Float,
+    override val voteAverage: Float,
     val overview: String,
     @SerializedName("first_air_date")
     val firstAirDate: String,
@@ -94,4 +107,37 @@ data class TVListEntry(
     override val name: String,
     @SerializedName("original_name")
     val originalName: String
-) : ListEntry
+) : HomeGridEntry, SearchListEntry
+
+
+data class Genre(
+    val id: Int,
+    val name: String
+)
+
+data class CastEntry(
+    @SerializedName("adult")
+    val adult: Boolean,
+    @SerializedName("cast_id")
+    val castId: Int,
+    @SerializedName("character")
+    val character: String,
+    @SerializedName("credit_id")
+    val creditId: String,
+    @SerializedName("gender")
+    val gender: Int,
+    @SerializedName("id")
+    val id: Int,
+    @SerializedName("known_for_department")
+    val knownForDepartment: String,
+    @SerializedName("name")
+    val name: String,
+    @SerializedName("order")
+    val order: Int,
+    @SerializedName("original_name")
+    val originalName: String,
+    @SerializedName("popularity")
+    val popularity: Float,
+    @SerializedName("profile_path")
+    val profilePath: String
+)

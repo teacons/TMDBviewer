@@ -31,10 +31,8 @@ fun HomeGridItem(posterPath: String?, title: String) {
                 imageModel = "https://image.tmdb.org/t/p/w185$posterPath",
                 contentScale = ContentScale.FillWidth,
                 loading = {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.align(Alignment.Center)
-                        )
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
                     }
                 },
                 failure = {
@@ -56,7 +54,6 @@ fun HomeGridItem(posterPath: String?, title: String) {
                 overflow = TextOverflow.Ellipsis,
             )
         }
-
     }
 }
 
@@ -93,6 +90,9 @@ fun HomeGridItem(posterPath: String?, title: String) {
 @Composable
 fun HomeGridItemPreview() {
     TMDBviewerTheme {
-        HomeGridItem(posterPath = null, title = "Test")
+        HomeGridItem(
+            posterPath = "/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg",
+            title = "Film name"
+        )
     }
 }
