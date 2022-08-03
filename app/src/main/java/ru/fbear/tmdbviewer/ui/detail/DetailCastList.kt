@@ -27,7 +27,9 @@ fun DetailCastList(cast: List<Cast>) {
             text = stringResource(R.string.cast),
             style = MaterialTheme.typography.h6
         )
-        LazyRow {
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             items(cast) {
                 DetailCastListItem(
                     profilePath = it.profilePath,

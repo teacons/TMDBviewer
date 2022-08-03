@@ -31,7 +31,7 @@ fun SearchListItem(posterPath: String?, title: String, voteAverage: Float) {
                 .padding(8.dp)
         ) {
             GlideImage(
-                imageModel = "https://image.tmdb.org/t/p/w154$posterPath",
+                imageModel = "https://image.tmdb.org/t/p/w154$posterPath".takeIf { posterPath != null },
                 contentScale = ContentScale.FillWidth,
                 loading = {
                     Box(modifier = Modifier.fillMaxSize()) {

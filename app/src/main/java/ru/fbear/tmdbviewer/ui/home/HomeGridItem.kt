@@ -30,7 +30,7 @@ fun HomeGridItem(posterPath: String?, title: String, onClick: () -> Unit) {
             modifier = Modifier.padding(8.dp)
         ) {
             GlideImage(
-                imageModel = "https://image.tmdb.org/t/p/w185$posterPath",
+                imageModel = "https://image.tmdb.org/t/p/w185$posterPath".takeIf { posterPath != null },
                 contentScale = ContentScale.FillWidth,
                 loading = {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
