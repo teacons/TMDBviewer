@@ -2,7 +2,10 @@ package ru.fbear.tmdbviewer
 
 import com.google.gson.annotations.SerializedName
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
+import ru.fbear.tmdbviewer.model.moviedetail.MovieDetailResponseWithCredits
+import ru.fbear.tmdbviewer.model.tvdetail.TVDetailResponseWithCredits
 
 interface TMDBApi {
 
@@ -21,10 +24,25 @@ interface TMDBApi {
         @Query("page") page: Int,
     ): PopularTVResponse
 
+    @GET("/3/movie/{id}?append_to_response=credits")
+    suspend fun getMovieDetailsWithCredits(
+        @Path("id") id: Int,
+        @Query("api_key") apiKey: String,
+        @Query("language") language: String,
+    ): MovieDetailResponseWithCredits
+
+    @GET("/3/tv/{id}?append_to_response=credits")
+    suspend fun getTvDetailsWithCredits(
+        @Path("id") id: Int,
+        @Query("api_key") apiKey: String,
+        @Query("language") language: String,
+    ): TVDetailResponseWithCredits
+
     @GET("/3/configuration")
     fun getConfiguration(@Query("api_key") apiKey: String)
 
 }
+
 
 data class PopularMovieResponse(
     val page: Int,
@@ -41,6 +59,7 @@ data class PopularTVResponse(
 )
 
 interface HomeGridEntry {
+    val id: Int
     val posterPath: String?
     val name: String
 }
@@ -67,7 +86,7 @@ data class MoviesListEntry(
     val releaseDate: String,
     @SerializedName("genre_ids")
     val genreIds: List<Int>,
-    val id: Int,
+    override val id: Int,
     @SerializedName("original_title")
     val originalTitle: String,
     @SerializedName("original_language")
@@ -88,7 +107,7 @@ data class TVListEntry(
     @SerializedName("poster_path")
     override val posterPath: String?,
     val popularity: Float,
-    val id: Int,
+    override val id: Int,
     @SerializedName("backdrop_path")
     val backdropPath: String?,
     @SerializedName("vote_average")
@@ -108,36 +127,3 @@ data class TVListEntry(
     @SerializedName("original_name")
     val originalName: String
 ) : HomeGridEntry, SearchListEntry
-
-
-data class Genre(
-    val id: Int,
-    val name: String
-)
-
-data class CastEntry(
-    @SerializedName("adult")
-    val adult: Boolean,
-    @SerializedName("cast_id")
-    val castId: Int,
-    @SerializedName("character")
-    val character: String,
-    @SerializedName("credit_id")
-    val creditId: String,
-    @SerializedName("gender")
-    val gender: Int,
-    @SerializedName("id")
-    val id: Int,
-    @SerializedName("known_for_department")
-    val knownForDepartment: String,
-    @SerializedName("name")
-    val name: String,
-    @SerializedName("order")
-    val order: Int,
-    @SerializedName("original_name")
-    val originalName: String,
-    @SerializedName("popularity")
-    val popularity: Float,
-    @SerializedName("profile_path")
-    val profilePath: String
-)

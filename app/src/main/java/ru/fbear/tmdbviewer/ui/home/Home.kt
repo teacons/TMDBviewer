@@ -7,10 +7,12 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 
 @Composable
-fun Home() {
+fun Home(navController: NavController) {
     val tabs = listOf(
         TabItem.Movies,
         TabItem.TV
@@ -26,7 +28,16 @@ fun Home() {
         }
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
-            HomeContent(selectedTab = selectedTab)
+            HomeContent(selectedTab = selectedTab) {
+                when (selectedTab) {
+                    TabItem.Movies -> {
+                        navController.navigate("detail/Movies/${it.id}")
+                    }
+                    TabItem.TV -> {
+                        navController.navigate("detail/TV/${it.id}")
+                    }
+                }
+            }
         }
     }
 }
@@ -59,6 +70,6 @@ fun Home() {
 @Composable
 fun HomePreview() {
     TMDBviewerTheme {
-        Home()
+        Home(rememberNavController())
     }
 }

@@ -13,12 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ru.fbear.tmdbviewer.CastEntry
 import ru.fbear.tmdbviewer.R
+import ru.fbear.tmdbviewer.model.Cast
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 
 @Composable
-fun DetailCastList(cast: List<CastEntry>) {
+fun DetailCastList(cast: List<Cast>) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.padding(8.dp)
@@ -74,9 +74,8 @@ fun DetailCastListPreview() {
     TMDBviewerTheme {
         DetailCastList(
             cast = List(15) {
-                CastEntry(
+                Cast(
                     adult = false,
-                    castId = 85,
                     character = "Thor Odinson",
                     creditId = "62c8c25290b87e00f53973fb",
                     gender = 2,

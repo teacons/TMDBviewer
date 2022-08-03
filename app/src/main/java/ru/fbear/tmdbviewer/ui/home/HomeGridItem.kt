@@ -17,9 +17,11 @@ import com.skydoves.landscapist.glide.GlideImage
 import ru.fbear.tmdbviewer.R
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun HomeGridItem(posterPath: String?, title: String) {
+fun HomeGridItem(posterPath: String?, title: String, onClick: () -> Unit) {
     Card(
+        onClick = onClick,
         modifier = Modifier.aspectRatio(2 / 3.7F)
     ) {
         Column(
@@ -93,6 +95,6 @@ fun HomeGridItemPreview() {
         HomeGridItem(
             posterPath = "/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg",
             title = "Film name"
-        )
+        ) {}
     }
 }

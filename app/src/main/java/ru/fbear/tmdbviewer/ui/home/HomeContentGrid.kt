@@ -10,7 +10,11 @@ import ru.fbear.tmdbviewer.HomeGridEntry
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 
 @Composable
-fun HomeContentGrid(listItems: List<HomeGridEntry>, onLoadMore: () -> Unit) {
+fun HomeContentGrid(
+    listItems: List<HomeGridEntry>,
+    onLoadMore: () -> Unit,
+    onItemClick: (HomeGridEntry) -> Unit
+) {
     val gridState = rememberLazyGridState()
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
@@ -19,7 +23,7 @@ fun HomeContentGrid(listItems: List<HomeGridEntry>, onLoadMore: () -> Unit) {
         state = gridState
     ) {
         items(listItems) { item ->
-            HomeGridItem(posterPath = item.posterPath, title = item.name)
+            HomeGridItem(posterPath = item.posterPath, title = item.name) { onItemClick(item) }
         }
     }
 
@@ -77,11 +81,12 @@ fun LazyGridState.OnBottomReached(
 fun HomeContentGridPreview() {
     val items = List(15) {
         object : HomeGridEntry {
+            override val id = it
             override val posterPath: String? = null
             override val name = "Movie $it"
         }
     }
     TMDBviewerTheme {
-        HomeContentGrid(listItems = items, onLoadMore = {})
+        HomeContentGrid(listItems = items, onLoadMore = {}, onItemClick = {})
     }
 }

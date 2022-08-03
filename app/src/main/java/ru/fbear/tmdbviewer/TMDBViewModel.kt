@@ -6,8 +6,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import ru.fbear.tmdbviewer.model.moviedetail.MovieDetailResponseWithCredits
+import ru.fbear.tmdbviewer.model.tvdetail.TVDetailResponseWithCredits
 import java.util.*
 
 class TMDBViewModel : ViewModel() {
@@ -63,6 +66,20 @@ class TMDBViewModel : ViewModel() {
             } catch (e: Exception) {
                 mutableConnectionError.value = true
             }
+        }
+    }
+
+    suspend fun getMovieDetails(id: Int): MovieDetailResponseWithCredits {
+        return withContext(Dispatchers.IO) {
+            val language = Locale.getDefault().toLanguageTag()
+            return@withContext api.getMovieDetailsWithCredits(id, apiKey, language)
+        }
+    }
+
+    suspend fun getTVDetails(id: Int): TVDetailResponseWithCredits {
+        return withContext(Dispatchers.IO) {
+            val language = Locale.getDefault().toLanguageTag()
+            return@withContext api.getTvDetailsWithCredits(id, apiKey, language)
         }
     }
 
