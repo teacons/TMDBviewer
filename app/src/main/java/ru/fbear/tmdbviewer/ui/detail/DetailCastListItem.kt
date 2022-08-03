@@ -25,11 +25,11 @@ fun DetailCastListItem(profilePath: String?, name: String, character: String) {
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier
             .padding(8.dp)
-            .aspectRatio(2 / 3.5F)
-
+            .width(128.dp)
+            .aspectRatio(2 / 4.5F)
     ) {
         GlideImage(
-            imageModel = "https://image.tmdb.org/t/p/w185$profilePath",
+            imageModel = "https://image.tmdb.org/t/p/w185$profilePath".takeIf { profilePath != null },
             contentScale = ContentScale.FillWidth,
             loading = {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -46,21 +46,30 @@ fun DetailCastListItem(profilePath: String?, name: String, character: String) {
                 }
             },
             previewPlaceholder = R.drawable.profile,
-            modifier = Modifier.aspectRatio(2 / 3F)
+            modifier = Modifier
+                .aspectRatio(2 / 3F)
+                .weight(0.7F)
         )
-        Text(
-            text = name,
-            style = MaterialTheme.typography.subtitle1,
-            textAlign = TextAlign.Center,
-            overflow = TextOverflow.Ellipsis,
-        )
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.weight(0.3F)
+        ) {
             Text(
-                text = character,
-                style = MaterialTheme.typography.subtitle2,
+                text = name,
+                style = MaterialTheme.typography.subtitle1,
                 textAlign = TextAlign.Center,
                 overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(0.3F)
             )
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                Text(
+                    text = character,
+                    style = MaterialTheme.typography.subtitle2,
+                    textAlign = TextAlign.Center,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(0.7F)
+                )
+            }
         }
     }
 }
@@ -69,31 +78,31 @@ fun DetailCastListItem(profilePath: String?, name: String, character: String) {
     name = "dark theme",
     group = "themes",
     uiMode = Configuration.UI_MODE_NIGHT_YES,
-    widthDp = 256
+    widthDp = 128
 )
 @Preview(
     name = "ru lang",
     group = "language",
     locale = "RU",
-    widthDp = 256
+    widthDp = 128
 )
 @Preview(
     name = "en lang",
     group = "language",
     locale = "EN",
-    widthDp = 256
+    widthDp = 128
 )
 @Preview(
     name = "small font",
     group = "font scales",
     fontScale = 0.5f,
-    widthDp = 256
+    widthDp = 128
 )
 @Preview(
     name = "large font",
     group = "font scales",
     fontScale = 1.5f,
-    widthDp = 256
+    widthDp = 128
 )
 @Composable
 fun DetailCastListItemPreview() {
