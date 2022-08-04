@@ -16,15 +16,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.fbear.tmdbviewer.TMDBViewModel
+import ru.fbear.tmdbviewer.Type
 import ru.fbear.tmdbviewer.model.Cast
 import ru.fbear.tmdbviewer.model.Genre
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 import kotlin.math.roundToInt
 
 @Composable
-fun Detail(type: String, id: Int, viewModel: TMDBViewModel = viewModel()) {
+fun Detail(type: Type, id: Int, viewModel: TMDBViewModel) {
     var contentIsReady by remember(id) { mutableStateOf(false) }
 
     var title by remember(id) { mutableStateOf<String?>(null) }
@@ -37,8 +37,13 @@ fun Detail(type: String, id: Int, viewModel: TMDBViewModel = viewModel()) {
 
     LaunchedEffect(Unit) {
         when (type) {
-            "TV" -> {
-                with(viewModel.getTVDetails(id)) {
+            Type.TV -> {
+                val tvDetail = try {
+                    viewModel.getTVDetails(id)
+                } catch (e: Exception) {
+                    return@LaunchedEffect
+                }
+                with(tvDetail) {
                     title = name
                     year = firstAirDate.split('-').first().toInt()
                     runtime = episodeRunTime.average().takeIf { !it.isNaN() }?.roundToInt()
@@ -49,8 +54,14 @@ fun Detail(type: String, id: Int, viewModel: TMDBViewModel = viewModel()) {
                 }
                 contentIsReady = true
             }
-            "Movies" -> {
-                with(viewModel.getMovieDetails(id)) {
+            Type.Movie -> {
+                val movieDetail = try {
+                    viewModel.getMovieDetails(id)
+                } catch (e: Exception) {
+                    return@LaunchedEffect
+                }
+
+                with(movieDetail) {
                     title = this.title
                     year = releaseDate.split('-').first().toInt()
                     runtime = this.runtime
@@ -61,7 +72,6 @@ fun Detail(type: String, id: Int, viewModel: TMDBViewModel = viewModel()) {
                 }
                 contentIsReady = true
             }
-            else -> throw IllegalArgumentException("Wrong type $type")
         }
     }
 

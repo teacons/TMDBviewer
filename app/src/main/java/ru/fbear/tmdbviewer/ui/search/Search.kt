@@ -2,20 +2,60 @@ package ru.fbear.tmdbviewer.ui.search
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Scaffold
-import androidx.compose.runtime.*
+import androidx.compose.material.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import ru.fbear.tmdbviewer.TMDBViewModel
+import ru.fbear.tmdbviewer.Type
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 
 @Composable
-fun Search() {
-    var searchTag by remember { mutableStateOf("") }
+fun Search(navController: NavController, viewModel: TMDBViewModel) {
+    val searchTag by viewModel.searchTag.collectAsState()
+
+    val searchedMovies by viewModel.searchedMovies.collectAsState()
+    val searchedMoviesTotalResult by viewModel.searchedMoviesTotalResults.collectAsState()
+    val searchedTV by viewModel.searchedTVs.collectAsState()
+    val searchedTVTotalResult by viewModel.searchedTVsTotalResults.collectAsState()
+
     Scaffold(
-        topBar = { SearchBar(value = searchTag, onValueChange = { searchTag = it }) }
+        topBar = { SearchBar(value = searchTag) { viewModel.updateSearchTag(it) } }
     ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
+        Box(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
+            if (searchedMovies.isNotEmpty() && searchedTV.isNotEmpty()) {
+                SearchList(
+                    searchedMovies = searchedMovies,
+                    searchedTV = searchedTV,
+                    totalMoviesResults = searchedMoviesTotalResult,
+                    totalTVResults = searchedTVTotalResult,
+                    onShowAllMovies = { navController.navigate("search/more/${Type.Movie.string}") },
+                    onShowAllTV = { navController.navigate("search/more/${Type.TV.string}") },
+                    onMovieItemClick = { navController.navigate("detail/${Type.Movie.string}/$it") },
+                    onTVItemClick = { navController.navigate("detail/${Type.TV.string}/$it") }
+                )
+            } else {
+                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                    Text(
+                        text = "Нет результатов",
+                        style = MaterialTheme.typography.h4,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            }
         }
     }
 }
@@ -48,6 +88,6 @@ fun Search() {
 @Composable
 fun SearchPreview() {
     TMDBviewerTheme {
-        Search()
+        Search(rememberNavController(), viewModel())
     }
 }

@@ -13,4 +13,5 @@
     <string name="cast">Cast</string>
     <string name="hours">h</string>
     <string name="minutes">m</string>
+    <string name="showall">Show all</string>
 </resources>

@@ -14,4 +14,5 @@
     <string name="cast">Актерский состав</string>
     <string name="hours">ч</string>
     <string name="minutes">м</string>
+    <string name="showall">Показать все</string>
 </resources>

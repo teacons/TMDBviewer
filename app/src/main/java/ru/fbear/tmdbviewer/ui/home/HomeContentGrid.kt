@@ -2,12 +2,16 @@ package ru.fbear.tmdbviewer.ui.home
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.lazy.grid.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.fbear.tmdbviewer.HomeGridEntry
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
+import ru.fbear.tmdbviewer.ui.utils.OnBottomReached
 
 @Composable
 fun HomeContentGrid(
@@ -30,27 +34,6 @@ fun HomeContentGrid(
     gridState.OnBottomReached(onLoadMore)
 }
 
-
-@Composable
-fun LazyGridState.OnBottomReached(
-    loadMore: () -> Unit
-) {
-    val shouldLoadMore = remember {
-        derivedStateOf {
-            val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
-                ?: return@derivedStateOf true
-
-            lastVisibleItem.index == layoutInfo.totalItemsCount - 1
-        }
-    }
-
-    LaunchedEffect(shouldLoadMore) {
-        snapshotFlow { shouldLoadMore.value }
-            .collect {
-                if (it) loadMore()
-            }
-    }
-}
 
 @Preview(
     name = "dark theme",

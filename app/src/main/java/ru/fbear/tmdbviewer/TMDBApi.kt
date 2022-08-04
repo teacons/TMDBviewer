@@ -1,11 +1,14 @@
 package ru.fbear.tmdbviewer
 
-import com.google.gson.annotations.SerializedName
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
-import ru.fbear.tmdbviewer.model.moviedetail.MovieDetailResponseWithCredits
-import ru.fbear.tmdbviewer.model.tvdetail.TVDetailResponseWithCredits
+import ru.fbear.tmdbviewer.model.MovieListResultObject
+import ru.fbear.tmdbviewer.model.TVListResultObject
+import ru.fbear.tmdbviewer.model.detail.movie.MovieDetailResponseWithCredits
+import ru.fbear.tmdbviewer.model.detail.tv.TVDetailResponseWithCredits
+import ru.fbear.tmdbviewer.model.search.movie.SearchMovie
+import ru.fbear.tmdbviewer.model.search.tv.SearchTV
 
 interface TMDBApi {
 
@@ -38,6 +41,23 @@ interface TMDBApi {
         @Query("language") language: String,
     ): TVDetailResponseWithCredits
 
+    @GET("/3/search/movie")
+    suspend fun searchMovie(
+        @Query("api_key") apiKey: String,
+        @Query("language") language: String,
+        @Query("query") query: String,
+        @Query("region") region: String,
+        @Query("page") page: Int,
+    ): SearchMovie
+
+    @GET("/3/search/tv")
+    suspend fun searchTV(
+        @Query("api_key") apiKey: String,
+        @Query("language") language: String,
+        @Query("query") query: String,
+        @Query("page") page: Int,
+    ): SearchTV
+
     @GET("/3/configuration")
     fun getConfiguration(@Query("api_key") apiKey: String)
 
@@ -46,14 +66,14 @@ interface TMDBApi {
 
 data class PopularMovieResponse(
     val page: Int,
-    val results: List<MoviesListEntry>,
+    val results: List<MovieListResultObject>,
     val totalResults: Int,
     val totalPages: Int
 )
 
 data class PopularTVResponse(
     val page: Int,
-    val results: List<TVListEntry>,
+    val results: List<TVListResultObject>,
     val totalResults: Int,
     val totalPages: Int
 )
@@ -65,65 +85,8 @@ interface HomeGridEntry {
 }
 
 interface SearchListEntry {
+    val id: Int
     val posterPath: String?
     val name: String
     val voteAverage: Float
 }
-
-interface DetailsEntry {
-    val name: String
-    val releaseDate: String
-
-    val posterPath: String?
-}
-
-data class MoviesListEntry(
-    @SerializedName("poster_path")
-    override val posterPath: String?,
-    val adult: Boolean,
-    val overview: String,
-    @SerializedName("release_date")
-    val releaseDate: String,
-    @SerializedName("genre_ids")
-    val genreIds: List<Int>,
-    override val id: Int,
-    @SerializedName("original_title")
-    val originalTitle: String,
-    @SerializedName("original_language")
-    val originalLanguage: String,
-    @SerializedName("title")
-    override val name: String,
-    @SerializedName("backdrop_path")
-    val backdropPath: String?,
-    val popularity: Float,
-    @SerializedName("vote_count")
-    val voteCount: Int,
-    val video: Boolean,
-    @SerializedName("vote_average")
-    override val voteAverage: Float
-) : HomeGridEntry, SearchListEntry
-
-data class TVListEntry(
-    @SerializedName("poster_path")
-    override val posterPath: String?,
-    val popularity: Float,
-    override val id: Int,
-    @SerializedName("backdrop_path")
-    val backdropPath: String?,
-    @SerializedName("vote_average")
-    override val voteAverage: Float,
-    val overview: String,
-    @SerializedName("first_air_date")
-    val firstAirDate: String,
-    @SerializedName("origin_country")
-    val originCountry: List<String>,
-    @SerializedName("genre_ids")
-    val genreIds: List<Int>,
-    @SerializedName("original_language")
-    val originalLanguage: String,
-    @SerializedName("vote_count")
-    val voteCount: Int,
-    override val name: String,
-    @SerializedName("original_name")
-    val originalName: String
-) : HomeGridEntry, SearchListEntry

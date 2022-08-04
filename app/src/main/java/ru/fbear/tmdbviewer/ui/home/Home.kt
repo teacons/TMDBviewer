@@ -7,17 +7,22 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import ru.fbear.tmdbviewer.TMDBViewModel
+import ru.fbear.tmdbviewer.Type
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 
 @Composable
-fun Home(navController: NavController) {
+fun Home(navController: NavController, viewModel: TMDBViewModel) {
     val tabs = listOf(
         TabItem.Movies,
         TabItem.TV
     )
     var selectedTab by remember { mutableStateOf<TabItem>(TabItem.Movies) }
+    val popularMovies by viewModel.popularMovies.collectAsState(emptyList())
+    val popularTVs by viewModel.popularTVs.collectAsState(emptyList())
 
     Scaffold(
         topBar = {
@@ -28,13 +33,19 @@ fun Home(navController: NavController) {
         }
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
-            HomeContent(selectedTab = selectedTab) {
+            HomeContent(
+                selectedTab = selectedTab,
+                popularMovies = popularMovies,
+                popularTVs = popularTVs,
+                onLoadMoreMovies = { viewModel.getPopularMovies() },
+                onLoadMoreTV = { viewModel.getPopularTVs() },
+            ) {
                 when (selectedTab) {
                     TabItem.Movies -> {
-                        navController.navigate("detail/Movies/${it.id}")
+                        navController.navigate("detail/${Type.Movie.string}/${it.id}")
                     }
                     TabItem.TV -> {
-                        navController.navigate("detail/TV/${it.id}")
+                        navController.navigate("detail/${Type.TV.string}/${it.id}")
                     }
                 }
             }
@@ -70,6 +81,6 @@ fun Home(navController: NavController) {
 @Composable
 fun HomePreview() {
     TMDBviewerTheme {
-        Home(rememberNavController())
+        Home(rememberNavController(), viewModel())
     }
 }

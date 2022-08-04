@@ -1,5 +1,4 @@
-package ru.fbear.tmdbviewer.model.tvdetail
-
+package ru.fbear.tmdbviewer.model.detail.tv
 
 import com.google.gson.annotations.SerializedName
 import ru.fbear.tmdbviewer.model.Credits

@@ -19,9 +19,11 @@ import ru.fbear.tmdbviewer.R
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 import kotlin.math.roundToInt
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SearchListItem(posterPath: String?, title: String, voteAverage: Float) {
+fun SearchListItem(posterPath: String?, title: String, voteAverage: Float, onClick: () -> Unit) {
     Card(
+        onClick = onClick,
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
@@ -116,6 +118,6 @@ fun SearchListItemPreview() {
             posterPath = "/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg",
             title = "Thor: Love and Thunder",
             voteAverage = 6.7F
-        )
+        ) {}
     }
 }
