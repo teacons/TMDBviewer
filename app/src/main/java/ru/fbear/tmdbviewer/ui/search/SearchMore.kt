@@ -18,18 +18,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import ru.fbear.tmdbviewer.SearchListEntry
-import ru.fbear.tmdbviewer.TMDBViewModel
 import ru.fbear.tmdbviewer.Type
+import ru.fbear.tmdbviewer.model.SearchListEntry
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 import ru.fbear.tmdbviewer.ui.utils.OnBottomReached
 
 @Composable
-fun SearchMore(navController: NavController, type: Type, viewModel: TMDBViewModel) {
+fun SearchMore(navController: NavController, type: Type, searchViewModel: SearchViewModel) {
 
     val searched: List<SearchListEntry> by when (type) {
-        Type.Movie -> viewModel.searchedMovies.collectAsState()
-        Type.TV -> viewModel.searchedTVs.collectAsState()
+        Type.Movie -> searchViewModel.searchedMovies.collectAsState()
+        Type.TV -> searchViewModel.searchedTVs.collectAsState()
     }
 
     val columnState = rememberLazyListState()
@@ -56,8 +55,8 @@ fun SearchMore(navController: NavController, type: Type, viewModel: TMDBViewMode
 
         columnState.OnBottomReached {
             when (type) {
-                Type.Movie -> viewModel.searchMovies()
-                Type.TV -> viewModel.searchTV()
+                Type.Movie -> searchViewModel.searchMovies()
+                Type.TV -> searchViewModel.searchTV()
             }
         }
     }

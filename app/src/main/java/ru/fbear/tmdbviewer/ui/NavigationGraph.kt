@@ -1,66 +1,62 @@
 package ru.fbear.tmdbviewer.ui
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import ru.fbear.tmdbviewer.TMDBViewModel
-import ru.fbear.tmdbviewer.Type
-import ru.fbear.tmdbviewer.ui.detail.Detail
+import ru.fbear.tmdbviewer.R
+import ru.fbear.tmdbviewer.ui.detail.DetailViewModel
+import ru.fbear.tmdbviewer.ui.detail.detailGraph
 import ru.fbear.tmdbviewer.ui.home.Home
+import ru.fbear.tmdbviewer.ui.home.HomeViewModel
 import ru.fbear.tmdbviewer.ui.profile.Profile
-import ru.fbear.tmdbviewer.ui.search.Search
-import ru.fbear.tmdbviewer.ui.search.SearchMore
+import ru.fbear.tmdbviewer.ui.profile.ProfileViewModel
+import ru.fbear.tmdbviewer.ui.search.SearchViewModel
+import ru.fbear.tmdbviewer.ui.search.searchGraph
 
 @Composable
 fun AppNavigationGraph(
     navController: NavHostController,
     modifier: Modifier
 ) {
-    val viewModel: TMDBViewModel = viewModel()
+    val homeViewModel: HomeViewModel = viewModel()
+    val searchViewModel: SearchViewModel = viewModel()
+    val profileViewModel: ProfileViewModel = viewModel()
+    val detailViewModel: DetailViewModel = viewModel()
+
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
+        startDestination = BottomNavScreen.Home.route,
+//        startDestination = "home_graph",
         modifier = modifier
     ) {
-        composable(
-            route = "detail/{type}/{id}",
-            arguments = listOf(
-                navArgument("type") { type = NavType.StringType },
-                navArgument("id") { type = NavType.IntType }
-            )
-        ) { backStackEntry ->
-            val typeString = backStackEntry.arguments?.getString("type")
-                ?: throw IllegalArgumentException("type is null")
-
-            val type: Type = Type.values().find { it.string == typeString }
-                ?: throw IllegalArgumentException("Unknown type")
-
-            val id = backStackEntry.arguments?.getInt("id")
-                ?: throw IllegalArgumentException("id is null")
-
-            Detail(type, id, viewModel)
-        }
-        composable(
-            route = "search/more/{type}",
-            arguments = listOf(
-                navArgument("type") { type = NavType.StringType },
-            )
-        ) { backStackEntry ->
-            val typeString = backStackEntry.arguments?.getString("type")
-                ?: throw IllegalArgumentException("type is null")
-
-            val type: Type = Type.values().find { it.string == typeString }
-                ?: throw IllegalArgumentException("Unknown type")
-            println("TEST Start SearchMore")
-            SearchMore(navController = navController, type = type, viewModel = viewModel)
-        }
-        composable(route = Screen.Home.route) { Home(navController, viewModel) }
-        composable(route = Screen.Search.route) { Search(navController, viewModel) }
-        composable(route = Screen.Profile.route) { Profile() }
+        detailGraph(detailViewModel)
+        composable(route = BottomNavScreen.Home.route) { Home(navController, homeViewModel) }
+//        homeGraph(navController, homeViewModel)
+        searchGraph(navController, searchViewModel)
+        composable(route = BottomNavScreen.Profile.route) { Profile(profileViewModel) }
     }
+}
+
+sealed class BottomNavScreen(val title: Int, val icon: ImageVector, override val route: String) :
+    Screen {
+    object Home : BottomNavScreen(R.string.home, Icons.Filled.Home, "home")
+    object Search : BottomNavScreen(R.string.search, Icons.Filled.Search, "search")
+    object Profile : BottomNavScreen(R.string.profile, Icons.Filled.Person, "profile")
+}
+
+interface Screen {
+    val route: String
+}
+
+interface ScreenWithArgs : Screen {
+    val args: List<NamedNavArgument>
 }

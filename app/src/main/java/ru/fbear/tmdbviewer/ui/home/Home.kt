@@ -10,12 +10,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import ru.fbear.tmdbviewer.TMDBViewModel
 import ru.fbear.tmdbviewer.Type
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 
 @Composable
-fun Home(navController: NavController, viewModel: TMDBViewModel) {
+fun Home(navController: NavController, viewModel: HomeViewModel) {
     val tabs = listOf(
         TabItem.Movies,
         TabItem.TV

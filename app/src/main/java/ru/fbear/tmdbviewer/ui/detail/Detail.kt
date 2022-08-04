@@ -16,15 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ru.fbear.tmdbviewer.TMDBViewModel
 import ru.fbear.tmdbviewer.Type
-import ru.fbear.tmdbviewer.model.Cast
-import ru.fbear.tmdbviewer.model.Genre
+import ru.fbear.tmdbviewer.model.detail.Cast
+import ru.fbear.tmdbviewer.model.detail.Genre
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 import kotlin.math.roundToInt
 
 @Composable
-fun Detail(type: Type, id: Int, viewModel: TMDBViewModel) {
+fun Detail(type: Type, id: Int, viewModel: DetailViewModel) {
     var contentIsReady by remember(id) { mutableStateOf(false) }
 
     var title by remember(id) { mutableStateOf<String?>(null) }

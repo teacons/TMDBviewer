@@ -2,8 +2,6 @@ package ru.fbear.tmdbviewer.model
 
 
 import com.google.gson.annotations.SerializedName
-import ru.fbear.tmdbviewer.HomeGridEntry
-import ru.fbear.tmdbviewer.SearchListEntry
 
 data class TVListResultObject(
     @SerializedName("backdrop_path") val backdropPath: String?,

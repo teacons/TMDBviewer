@@ -1,14 +1,17 @@
 package ru.fbear.tmdbviewer
 
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
-import ru.fbear.tmdbviewer.model.MovieListResultObject
-import ru.fbear.tmdbviewer.model.TVListResultObject
+import com.google.gson.annotations.SerializedName
+import retrofit2.http.*
+import ru.fbear.tmdbviewer.model.account.AccountDetails
+import ru.fbear.tmdbviewer.model.auth.AuthToken
+import ru.fbear.tmdbviewer.model.auth.NewSession
 import ru.fbear.tmdbviewer.model.detail.movie.MovieDetailResponseWithCredits
 import ru.fbear.tmdbviewer.model.detail.tv.TVDetailResponseWithCredits
+import ru.fbear.tmdbviewer.model.popular.movie.PopularMovies
+import ru.fbear.tmdbviewer.model.popular.tv.PopularTVs
 import ru.fbear.tmdbviewer.model.search.movie.SearchMovie
 import ru.fbear.tmdbviewer.model.search.tv.SearchTV
+
 
 interface TMDBApi {
 
@@ -18,14 +21,14 @@ interface TMDBApi {
         @Query("language") language: String,
         @Query("page") page: Int,
         @Query("region") region: String
-    ): PopularMovieResponse
+    ): PopularMovies
 
     @GET("/3/tv/popular")
     suspend fun getPopularTV(
         @Query("api_key") apiKey: String,
         @Query("language") language: String,
         @Query("page") page: Int,
-    ): PopularTVResponse
+    ): PopularTVs
 
     @GET("/3/movie/{id}?append_to_response=credits")
     suspend fun getMovieDetailsWithCredits(
@@ -58,35 +61,37 @@ interface TMDBApi {
         @Query("page") page: Int,
     ): SearchTV
 
-    @GET("/3/configuration")
-    fun getConfiguration(@Query("api_key") apiKey: String)
+    @GET("/3/authentication/token/new")
+    suspend fun createAuthToken(@Query("api_key") apiKey: String): AuthToken
+
+    @Headers("Content-Type: application/json")
+    @POST("/3/authentication/token/validate_with_login")
+    suspend fun validateAuthToken(
+        @Query("api_key") apiKey: String,
+        @Body request: ValidateAuthTokenRequest
+    ): AuthToken
+
+    @Headers("Content-Type: application/json")
+    @POST("/3/authentication/session/new")
+    suspend fun createNewSession(
+        @Query("api_key") apiKey: String,
+        @Body request: CreateNewTokenRequest
+    ): NewSession
+
+    @GET("/3/account")
+    suspend fun getAccountDetails(
+        @Query("api_key") apiKey: String,
+        @Query("session_id") sessionId: String
+    ): AccountDetails
 
 }
 
-
-data class PopularMovieResponse(
-    val page: Int,
-    val results: List<MovieListResultObject>,
-    val totalResults: Int,
-    val totalPages: Int
+data class ValidateAuthTokenRequest(
+    @SerializedName("password") val password: String,
+    @SerializedName("request_token") val requestToken: String,
+    @SerializedName("username") val username: String
 )
 
-data class PopularTVResponse(
-    val page: Int,
-    val results: List<TVListResultObject>,
-    val totalResults: Int,
-    val totalPages: Int
+data class CreateNewTokenRequest(
+    @SerializedName("request_token") val requestToken: String
 )
-
-interface HomeGridEntry {
-    val id: Int
-    val posterPath: String?
-    val name: String
-}
-
-interface SearchListEntry {
-    val id: Int
-    val posterPath: String?
-    val name: String
-    val voteAverage: Float
-}

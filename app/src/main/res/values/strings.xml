@@ -14,4 +14,10 @@
     <string name="hours">h</string>
     <string name="minutes">m</string>
     <string name="showall">Show all</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="language">Language</string>
+    <string name="name">Name</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
 </resources>

@@ -15,21 +15,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import ru.fbear.tmdbviewer.TMDBViewModel
 import ru.fbear.tmdbviewer.Type
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 
 @Composable
-fun Search(navController: NavController, viewModel: TMDBViewModel) {
-    val searchTag by viewModel.searchTag.collectAsState()
+fun Search(navController: NavController, searchViewModel: SearchViewModel) {
+    val searchTag by searchViewModel.searchTag.collectAsState()
 
-    val searchedMovies by viewModel.searchedMovies.collectAsState()
-    val searchedMoviesTotalResult by viewModel.searchedMoviesTotalResults.collectAsState()
-    val searchedTV by viewModel.searchedTVs.collectAsState()
-    val searchedTVTotalResult by viewModel.searchedTVsTotalResults.collectAsState()
+    val searchedMovies by searchViewModel.searchedMovies.collectAsState()
+    val searchedMoviesTotalResult by searchViewModel.searchedMoviesTotalResults.collectAsState()
+    val searchedTV by searchViewModel.searchedTVs.collectAsState()
+    val searchedTVTotalResult by searchViewModel.searchedTVsTotalResults.collectAsState()
 
     Scaffold(
-        topBar = { SearchBar(value = searchTag) { viewModel.updateSearchTag(it) } }
+        topBar = { SearchBar(value = searchTag) { searchViewModel.updateSearchTag(it) } }
     ) { innerPadding ->
         Box(
             modifier = Modifier

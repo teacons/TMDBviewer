@@ -1,10 +1,10 @@
 package ru.fbear.tmdbviewer.model.detail.tv
 
 import com.google.gson.annotations.SerializedName
-import ru.fbear.tmdbviewer.model.Credits
-import ru.fbear.tmdbviewer.model.Genre
-import ru.fbear.tmdbviewer.model.ProductionCompany
-import ru.fbear.tmdbviewer.model.ProductionCountry
+import ru.fbear.tmdbviewer.model.detail.Credits
+import ru.fbear.tmdbviewer.model.detail.Genre
+import ru.fbear.tmdbviewer.model.detail.ProductionCompany
+import ru.fbear.tmdbviewer.model.detail.ProductionCountry
 
 data class TVDetailResponseWithCredits(
     @SerializedName("adult") val adult: Boolean,

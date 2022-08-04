@@ -5,28 +5,22 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import ru.fbear.tmdbviewer.R
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 
 @Composable
 fun AppBottomNavigation(navController: NavController) {
     val items = listOf(
-        Screen.Home,
-        Screen.Search,
-        Screen.Profile
+        BottomNavScreen.Home,
+        BottomNavScreen.Search,
+        BottomNavScreen.Profile
     )
     BottomNavigation {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -51,12 +45,6 @@ fun AppBottomNavigation(navController: NavController) {
             )
         }
     }
-}
-
-sealed class Screen(var title: Int, var icon: ImageVector, var route: String) {
-    object Home : Screen(R.string.home, Icons.Filled.Home, "home")
-    object Search : Screen(R.string.search, Icons.Filled.Search, "search")
-    object Profile : Screen(R.string.profile, Icons.Filled.Person, "profile")
 }
 
 @Preview(

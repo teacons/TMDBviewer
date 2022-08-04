@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.fbear.tmdbviewer.R
-import ru.fbear.tmdbviewer.SearchListEntry
+import ru.fbear.tmdbviewer.model.SearchListEntry
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 
 @Composable
@@ -41,7 +41,7 @@ fun SearchList(
                 onShowAllClick = onShowAllMovies,
                 onItemClick = onMovieItemClick
             )
-            Divider()
+            if (searchedTV.isNotEmpty()) Divider()
         }
         if (searchedTV.isNotEmpty()) {
             SearchSubList(

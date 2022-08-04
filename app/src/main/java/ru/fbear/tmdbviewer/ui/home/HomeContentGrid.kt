@@ -9,7 +9,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ru.fbear.tmdbviewer.HomeGridEntry
+import ru.fbear.tmdbviewer.model.HomeGridEntry
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 import ru.fbear.tmdbviewer.ui.utils.OnBottomReached
 

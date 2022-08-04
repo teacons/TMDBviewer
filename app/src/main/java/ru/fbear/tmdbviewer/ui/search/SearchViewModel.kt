@@ -1,4 +1,4 @@
-package ru.fbear.tmdbviewer
+package ru.fbear.tmdbviewer.ui.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,33 +9,23 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import ru.fbear.tmdbviewer.BuildConfig
+import ru.fbear.tmdbviewer.TMDBApi
 import ru.fbear.tmdbviewer.model.MovieListResultObject
 import ru.fbear.tmdbviewer.model.TVListResultObject
-import ru.fbear.tmdbviewer.model.detail.movie.MovieDetailResponseWithCredits
-import ru.fbear.tmdbviewer.model.detail.tv.TVDetailResponseWithCredits
 import java.util.*
 
-class TMDBViewModel : ViewModel() {
-
+class SearchViewModel : ViewModel() {
     private val apiKey = BuildConfig.TMDB_API_KEY
 
-    private val retrofit = Retrofit.Builder()
+    private val api = Retrofit.Builder()
         .baseUrl("https://api.themoviedb.org/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-
-    private val api = retrofit.create(TMDBApi::class.java)
+        .create(TMDBApi::class.java)
 
     private val mutableConnectionError = MutableStateFlow(false)
     val connectionError = mutableConnectionError.asStateFlow()
-
-    private val mutablePopularMovies = MutableStateFlow(emptyList<MovieListResultObject>())
-    val popularMovies = mutablePopularMovies.asStateFlow()
-    private var popularMoviesLastPage = 0
-
-    private val mutablePopularTVs = MutableStateFlow(emptyList<TVListResultObject>())
-    val popularTVs = mutablePopularTVs.asStateFlow()
-    private var popularTVsLastPage = 0
 
     private val mutableSearchTag = MutableStateFlow("")
     val searchTag = mutableSearchTag.asStateFlow()
@@ -57,54 +47,6 @@ class TMDBViewModel : ViewModel() {
             searchTag.collect {
                 searchPreview(it)
             }
-        }
-    }
-
-
-    fun getPopularMovies() {
-        if (popularMoviesLastPage + 1 > 500) return
-        val language = Locale.getDefault().toLanguageTag()
-        val region = Locale.getDefault().country
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                api.getPopularMovies(apiKey, language, popularMoviesLastPage + 1, region)
-                    .also {
-                        mutablePopularMovies.value = mutablePopularMovies.value + it.results
-                        popularMoviesLastPage = it.page
-                    }
-            } catch (e: Exception) {
-                mutableConnectionError.value = true
-            }
-        }
-    }
-
-    fun getPopularTVs() {
-        if (popularTVsLastPage + 1 > 500) return
-        val language = Locale.getDefault().toLanguageTag()
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                api.getPopularTV(apiKey, language, popularTVsLastPage + 1)
-                    .also {
-                        mutablePopularTVs.value = mutablePopularTVs.value + it.results
-                        popularTVsLastPage = it.page
-                    }
-            } catch (e: Exception) {
-                mutableConnectionError.value = true
-            }
-        }
-    }
-
-    suspend fun getMovieDetails(id: Int): MovieDetailResponseWithCredits {
-        return withContext(Dispatchers.IO) {
-            val language = Locale.getDefault().toLanguageTag()
-            return@withContext api.getMovieDetailsWithCredits(id, apiKey, language)
-        }
-    }
-
-    suspend fun getTVDetails(id: Int): TVDetailResponseWithCredits {
-        return withContext(Dispatchers.IO) {
-            val language = Locale.getDefault().toLanguageTag()
-            return@withContext api.getTvDetailsWithCredits(id, apiKey, language)
         }
     }
 

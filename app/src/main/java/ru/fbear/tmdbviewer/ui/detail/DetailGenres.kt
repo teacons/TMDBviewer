@@ -13,7 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.flowlayout.FlowRow
 import ru.fbear.tmdbviewer.R
-import ru.fbear.tmdbviewer.model.Genre
+import ru.fbear.tmdbviewer.model.detail.Genre
 import ru.fbear.tmdbviewer.ui.Chip
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 

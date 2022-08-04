@@ -1,4 +1,4 @@
-package ru.fbear.tmdbviewer.model
+package ru.fbear.tmdbviewer.model.detail
 
 import com.google.gson.annotations.SerializedName
 
