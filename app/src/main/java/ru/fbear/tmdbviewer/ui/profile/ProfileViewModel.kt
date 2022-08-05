@@ -67,6 +67,16 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                 if (it != null) getFavoriteIds(it.id)
             }
         }
+        viewModelScope.launch {
+            favoriteMovieIds.collect {
+                if (accountDetails.value != null) updateFavorite(Type.Movie)
+            }
+        }
+        viewModelScope.launch {
+            favoriteTVIds.collect {
+                if (accountDetails.value != null) updateFavorite(Type.TV)
+            }
+        }
     }
 
     fun isFavorite(id: Int, type: Type): Boolean {
@@ -74,6 +84,22 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
             Type.Movie -> id in favoriteMovieIds.value
             Type.TV -> id in favoriteTVIds.value
         }
+    }
+
+    private fun updateFavorite(type: Type) {
+        when (type) {
+            Type.Movie -> {
+                mutableFavoriteMovies.value = emptyList()
+                favoriteMoviesLastPage = 0
+                getFavoriteMovies()
+            }
+            Type.TV -> {
+                mutableFavoriteTVs.value = emptyList()
+                favoriteTVsLastPage = 0
+                getFavoriteTVs()
+            }
+        }
+
     }
 
     fun getFavoriteMovies() {
@@ -87,7 +113,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                     sessionId!!,
                     language,
                     favoriteMoviesLastPage + 1
-                ) .also {
+                ).also {
                     mutableFavoriteMovies.value += it.results
                     favoriteMoviesLastPage = it.page
                 }
@@ -107,7 +133,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                     sessionId!!,
                     language,
                     favoriteTVsLastPage + 1
-                ) .also {
+                ).also {
                     mutableFavoriteTVs.value += it.results
                     favoriteTVsLastPage = it.page
                 }
