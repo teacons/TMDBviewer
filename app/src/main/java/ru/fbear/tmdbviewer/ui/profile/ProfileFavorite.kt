@@ -16,7 +16,7 @@ fun ProfileFavorite(
         favoriteList = favoriteMovies,
         onLoadMore = onLoadMore,
         onClick = {})
-    if (favoriteTVs.isNotEmpty()) Divider()
+    if (favoriteMovies.isNotEmpty()) Divider()
     ProfileFavoriteList(
         type = Type.TV,
         favoriteList = favoriteTVs,
