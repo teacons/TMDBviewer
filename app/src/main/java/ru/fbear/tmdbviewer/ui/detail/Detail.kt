@@ -13,10 +13,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
+import ru.fbear.tmdbviewer.R
 import ru.fbear.tmdbviewer.Type
 import ru.fbear.tmdbviewer.model.detail.Cast
 import ru.fbear.tmdbviewer.model.detail.Genre
@@ -42,18 +45,7 @@ fun Detail(
     var overview by remember(id) { mutableStateOf<String?>(null) }
     var cast by remember(id) { mutableStateOf<List<Cast>?>(null) }
 
-    var liked by remember(id) { mutableStateOf(profileViewModel.isFavorite(id, type)) }
-
-    LaunchedEffect(liked) {
-        if (liked != profileViewModel.isFavorite(id, type)) {
-            try {
-                profileViewModel.markAsFavorite(liked, id, type)
-            } catch (e: Exception) {
-                liked = !liked
-                e.printStackTrace()
-            }
-        }
-    }
+    val isLogined by profileViewModel.isLogined.collectAsState()
 
     LaunchedEffect(Unit) {
         when (type) {
@@ -104,8 +96,9 @@ fun Detail(
             posterPath = posterPath,
             overview = overview!!,
             cast = cast!!,
-            liked = liked,
-            onLikeChanged = { liked = !liked },
+            isLogined = isLogined,
+            isLiked = { profileViewModel.isFavorite(id, type) },
+            onLikeChanged = { profileViewModel.markAsFavorite(it, id, type) },
             onBackPressed = { navController.popBackStack() }
         )
     } else {
@@ -129,11 +122,22 @@ private fun Detail(
     posterPath: String?,
     overview: String,
     cast: List<Cast>,
-    liked: Boolean,
-    onLikeChanged: () -> Unit,
+    isLogined: Boolean,
+    isLiked: () -> Boolean,
+    onLikeChanged: suspend (Boolean) -> Unit,
     onBackPressed: () -> Unit
 ) {
+
+    val coroutineScope = rememberCoroutineScope()
+
+    var liked by remember { mutableStateOf(isLiked()) }
+
+    val scaffoldState = rememberScaffoldState()
+
+    val context = LocalContext.current
+
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
                 title = {
@@ -149,7 +153,16 @@ private fun Detail(
                     }
                 },
                 actions = {
-                    IconButton(onClick = onLikeChanged) {
+                    IconButton(onClick = {
+                        coroutineScope.launch {
+                            if (isLogined) {
+                                onLikeChanged(!liked)
+                                liked = isLiked()
+                            } else {
+                                scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.need_login))
+                            }
+                        }
+                    }) {
                         Icon(
                             imageVector = if (liked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                             contentDescription = null
@@ -227,9 +240,10 @@ fun DetailPreview() {
                     profilePath = "/jpurJ9jAcLCYjgHHfYF32m3zJYm.jpg"
                 )
             },
-            liked = true,
+            isLiked = { true },
             onLikeChanged = {},
-            onBackPressed = {}
+            onBackPressed = {},
+            isLogined = true
         )
     }
 }

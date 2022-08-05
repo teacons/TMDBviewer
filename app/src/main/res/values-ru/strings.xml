@@ -23,5 +23,6 @@
     <string name="logout">Выйти</string>
     <string name="favorite_movies">Любимые фильмы</string>
     <string name="favorite_tv">Любимые сериалы</string>
+    <string name="need_login">Сначала авторизируйтесь</string>
 
 </resources>

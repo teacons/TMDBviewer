@@ -4,12 +4,15 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import ru.fbear.tmdbviewer.R
 import ru.fbear.tmdbviewer.Type
 import ru.fbear.tmdbviewer.ui.profile.ProfileViewModel
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
@@ -28,7 +31,13 @@ fun Home(
     val popularMovies by viewModel.popularMovies.collectAsState(emptyList())
     val popularTVs by viewModel.popularTVs.collectAsState(emptyList())
 
+    val isLogined by profileViewModel.isLogined.collectAsState()
+
+    val scaffoldState = rememberScaffoldState()
+    val context = LocalContext.current
+
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = {
             HomeGridTabs(
                 tabs = tabs,
@@ -43,7 +52,8 @@ fun Home(
                 popularTVs = popularTVs,
                 isLiked = { id, type -> profileViewModel.isFavorite(id, type) },
                 onLikedChange = { liked, id, type ->
-                    profileViewModel.markAsFavorite(liked, id, type)
+                    if (isLogined) profileViewModel.markAsFavorite(liked, id, type)
+                    else scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.need_login))
                 },
                 onLoadMoreMovies = { viewModel.getPopularMovies() },
                 onLoadMoreTV = { viewModel.getPopularTVs() },

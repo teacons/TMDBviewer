@@ -11,10 +11,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import ru.fbear.tmdbviewer.R
 import ru.fbear.tmdbviewer.Type
 import ru.fbear.tmdbviewer.ui.profile.ProfileViewModel
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
@@ -32,7 +34,13 @@ fun Search(
     val searchedTV by searchViewModel.searchedTVs.collectAsState()
     val searchedTVTotalResult by searchViewModel.searchedTVsTotalResults.collectAsState()
 
+    val isLogined by profileViewModel.isLogined.collectAsState()
+
+    val scaffoldState = rememberScaffoldState()
+    val context = LocalContext.current
+
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = { SearchBar(value = searchTag) { searchViewModel.updateSearchTag(it) } }
     ) { innerPadding ->
         Box(
@@ -48,11 +56,8 @@ fun Search(
                     totalTVResults = searchedTVTotalResult,
                     isLiked = { id, type -> profileViewModel.isFavorite(id, type) },
                     onLikedChange = { liked, id, type ->
-                        profileViewModel.markAsFavorite(
-                            liked,
-                            id,
-                            type
-                        )
+                        if (isLogined) profileViewModel.markAsFavorite(liked, id, type)
+                        else scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.need_login))
                     },
                     onShowAllMovies = { navController.navigate("search/more/${Type.Movie.string}") },
                     onShowAllTV = { navController.navigate("search/more/${Type.TV.string}") },
