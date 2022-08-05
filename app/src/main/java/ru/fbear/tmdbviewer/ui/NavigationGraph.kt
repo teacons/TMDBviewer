@@ -35,12 +35,10 @@ fun AppNavigationGraph(
     NavHost(
         navController = navController,
         startDestination = BottomNavScreen.Home.route,
-//        startDestination = "home_graph",
         modifier = modifier
     ) {
-        detailGraph(detailViewModel)
+        detailGraph(navController, detailViewModel)
         composable(route = BottomNavScreen.Home.route) { Home(navController, homeViewModel) }
-//        homeGraph(navController, homeViewModel)
         searchGraph(navController, searchViewModel)
         composable(route = BottomNavScreen.Profile.route) { Profile(profileViewModel) }
     }

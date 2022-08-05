@@ -77,7 +77,7 @@ fun ProfileLogin(
                 trailingIcon = {
                     IconButton(onClick = { passwordIsVisible = !passwordIsVisible }) {
                         Icon(
-                            imageVector = if (passwordIsVisible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
+                            imageVector = if (passwordIsVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                             contentDescription = null
                         )
                     }
@@ -149,7 +149,7 @@ fun ProfileLogin(
 fun ProfileLoginPreview() {
     TMDBviewerTheme {
         ProfileLogin(
-            onLoginRequest = { _: String, _: String -> return@ProfileLogin true }
+            onLoginRequest = { _, _ -> return@ProfileLogin true }
         )
     }
 }

@@ -1,21 +1,22 @@
 package ru.fbear.tmdbviewer.ui.detail
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import ru.fbear.tmdbviewer.Type
 import ru.fbear.tmdbviewer.model.detail.Cast
 import ru.fbear.tmdbviewer.model.detail.Genre
@@ -23,7 +24,7 @@ import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 import kotlin.math.roundToInt
 
 @Composable
-fun Detail(type: Type, id: Int, viewModel: DetailViewModel) {
+fun Detail(type: Type, id: Int, navController: NavController, viewModel: DetailViewModel) {
     var contentIsReady by remember(id) { mutableStateOf(false) }
 
     var title by remember(id) { mutableStateOf<String?>(null) }
@@ -33,6 +34,8 @@ fun Detail(type: Type, id: Int, viewModel: DetailViewModel) {
     var posterPath by remember(id) { mutableStateOf<String?>(null) }
     var overview by remember(id) { mutableStateOf<String?>(null) }
     var cast by remember(id) { mutableStateOf<List<Cast>?>(null) }
+
+    var liked by remember(id) { mutableStateOf(false) } // TODO:
 
     LaunchedEffect(Unit) {
         when (type) {
@@ -82,7 +85,10 @@ fun Detail(type: Type, id: Int, viewModel: DetailViewModel) {
             genres = genres!!,
             posterPath = posterPath,
             overview = overview!!,
-            cast = cast!!
+            cast = cast!!,
+            liked = liked,
+            onLikeChanged = { liked = !liked },
+            onBackPressed = { navController.popBackStack() }
         )
     } else {
         Box(
@@ -104,16 +110,43 @@ private fun Detail(
     genres: List<Genre>,
     posterPath: String?,
     overview: String,
-    cast: List<Cast>
+    cast: List<Cast>,
+    liked: Boolean,
+    onLikeChanged: () -> Unit,
+    onBackPressed: () -> Unit
 ) {
-    Surface(
-        color = MaterialTheme.colors.background,
-        contentColor = MaterialTheme.colors.onBackground,
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = title,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBackPressed) {
+                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null)
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onLikeChanged) {
+                        Icon(
+                            imageVector = if (liked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                            contentDescription = null
+                        )
+                    }
+                },
+                backgroundColor = Color.Transparent
+            )
+        }
+    ) { innerPadding ->
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.verticalScroll(rememberScrollState())
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(innerPadding)
         ) {
             DetailHeader(title = title, year = year, runtime = runtime, posterPath = posterPath)
             Divider()
@@ -175,7 +208,10 @@ fun DetailPreview() {
                     popularity = 151.528F,
                     profilePath = "/jpurJ9jAcLCYjgHHfYF32m3zJYm.jpg"
                 )
-            }
+            },
+            liked = true,
+            onLikeChanged = {},
+            onBackPressed = {}
         )
     }
 }

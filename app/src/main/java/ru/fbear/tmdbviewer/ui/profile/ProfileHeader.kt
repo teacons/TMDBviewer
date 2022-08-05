@@ -77,12 +77,14 @@ fun ProfileHeader(
             )
             Column {
                 CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                    Text(
-                        text = "${stringResource(id = R.string.name)}: $name",
-                        style = MaterialTheme.typography.subtitle1,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-                    )
+                    if (name.isNotEmpty()) {
+                        Text(
+                            text = "${stringResource(id = R.string.name)}: $name",
+                            style = MaterialTheme.typography.subtitle1,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    }
                     Text(
                         text = "ID: $id",
                         style = MaterialTheme.typography.subtitle1,
