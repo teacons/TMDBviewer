@@ -5,8 +5,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import ru.fbear.tmdbviewer.Type
 import ru.fbear.tmdbviewer.ui.ScreenWithArgs
+import ru.fbear.tmdbviewer.ui.profile.ProfileViewModel
 
-fun NavGraphBuilder.detailGraph(navController: NavController, viewModel: DetailViewModel) {
+fun NavGraphBuilder.detailGraph(
+    navController: NavController,
+    viewModel: DetailViewModel,
+    profileViewModel: ProfileViewModel
+) {
     navigation(startDestination = DetailScreen.Detail.route, route = "detail_graph") {
         composable(
             route = DetailScreen.Detail.route,
@@ -21,7 +26,7 @@ fun NavGraphBuilder.detailGraph(navController: NavController, viewModel: DetailV
             val id = backStackEntry.arguments?.getInt("id")
                 ?: throw IllegalArgumentException("id is null")
 
-            Detail(type, id, navController, viewModel)
+            Detail(type, id, navController, viewModel, profileViewModel)
         }
     }
 }

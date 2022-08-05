@@ -15,11 +15,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import ru.fbear.tmdbviewer.BuildConfig
-import ru.fbear.tmdbviewer.CreateNewTokenRequest
-import ru.fbear.tmdbviewer.TMDBApi
-import ru.fbear.tmdbviewer.ValidateAuthTokenRequest
+import ru.fbear.tmdbviewer.*
 import ru.fbear.tmdbviewer.model.account.AccountDetails
+import java.util.*
 
 class ProfileViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -42,12 +40,102 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
     private val mutableAccountDetails = MutableStateFlow<AccountDetails?>(null)
     val accountDetails = mutableAccountDetails.asStateFlow()
 
+    private val favoriteMovieIds = MutableStateFlow(emptyList<Int>())
+
+    private val favoriteTVIds = MutableStateFlow(emptyList<Int>())
+
     init {
         viewModelScope.launch {
             sessionIdFlow.collect {
                 sessionId = it
                 mutableIsLogined.value = it != null
                 if (it != null) getAccountDetails()
+            }
+        }
+        viewModelScope.launch {
+            accountDetails.collect {
+                if (it != null) getFavoriteIds(it.id)
+            }
+        }
+    }
+
+    fun isFavorite(id: Int, type: Type): Boolean {
+        return when (type) {
+            Type.Movie -> id in this.favoriteMovieIds.value
+            Type.TV -> id in this.favoriteTVIds.value
+        }
+    }
+
+    private suspend fun getFavoriteIds(accountId: Int) {
+        if (sessionId != null) {
+            val language = Locale.getDefault().toLanguageTag()
+            withContext(Dispatchers.IO) {
+                launch {
+                    val favoriteMovieIds = mutableListOf<Int>()
+                    for (i in 1..500) {
+                        try {
+                            favoriteMovieIds.addAll(
+                                api.getFavouriteMoviesForAccount(
+                                    accountId,
+                                    apiKey,
+                                    sessionId!!,
+                                    language,
+                                    i
+                                ).results.takeIf { it.isNotEmpty() }?.map { it.id } ?: break)
+                        } catch (e: Exception) {
+                            break
+                        }
+                    }
+                    this@ProfileViewModel.favoriteMovieIds.value = favoriteMovieIds.toList()
+                }
+                launch {
+                    val favoriteTVIds = mutableListOf<Int>()
+                    for (i in 1..500) {
+                        try {
+                            favoriteTVIds.addAll(
+                                api.getFavouriteTVsForAccount(
+                                    accountId,
+                                    apiKey,
+                                    sessionId!!,
+                                    language,
+                                    i
+                                ).results.takeIf { it.isNotEmpty() }?.map { it.id } ?: break)
+                        } catch (e: Exception) {
+                            break
+                        }
+                    }
+                    this@ProfileViewModel.favoriteTVIds.value = favoriteTVIds.toList()
+                }
+            }
+        }
+    }
+
+    suspend fun markAsFavorite(isLiked: Boolean, id: Int, type: Type) {
+        return withContext(Dispatchers.IO) {
+            if (accountDetails.value != null) {
+
+                val markAnswer = api.markAsFavorite(
+                    accountDetails.value!!.id,
+                    apiKey,
+                    sessionId!!,
+                    MarkAsFavoriteRequest(isLiked, id, type.string)
+                )
+                when (markAnswer.statusCode) {
+                    1 -> {
+                        when (type) {
+                            Type.Movie -> this@ProfileViewModel.favoriteMovieIds.value += id
+                            Type.TV -> this@ProfileViewModel.favoriteTVIds.value += id
+                        }
+                    }
+                    13 -> {
+                        when (type) {
+                            Type.Movie -> this@ProfileViewModel.favoriteMovieIds.value -= id
+                            Type.TV -> this@ProfileViewModel.favoriteTVIds.value -= id
+                        }
+                    }
+                    12 -> Unit
+                    else -> throw IllegalStateException("statusCode = ${markAnswer.statusCode} message = ${markAnswer.statusMessage}")
+                }
             }
         }
     }
@@ -101,6 +189,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
             loginData.removeSessionId()
         }
     }
+
 }
 
 class LoginData(private val context: Context) {

@@ -20,11 +20,18 @@ import androidx.navigation.NavController
 import ru.fbear.tmdbviewer.Type
 import ru.fbear.tmdbviewer.model.detail.Cast
 import ru.fbear.tmdbviewer.model.detail.Genre
+import ru.fbear.tmdbviewer.ui.profile.ProfileViewModel
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 import kotlin.math.roundToInt
 
 @Composable
-fun Detail(type: Type, id: Int, navController: NavController, viewModel: DetailViewModel) {
+fun Detail(
+    type: Type,
+    id: Int,
+    navController: NavController,
+    viewModel: DetailViewModel,
+    profileViewModel: ProfileViewModel
+) {
     var contentIsReady by remember(id) { mutableStateOf(false) }
 
     var title by remember(id) { mutableStateOf<String?>(null) }
@@ -35,7 +42,18 @@ fun Detail(type: Type, id: Int, navController: NavController, viewModel: DetailV
     var overview by remember(id) { mutableStateOf<String?>(null) }
     var cast by remember(id) { mutableStateOf<List<Cast>?>(null) }
 
-    var liked by remember(id) { mutableStateOf(false) } // TODO:
+    var liked by remember(id) { mutableStateOf(profileViewModel.isFavorite(id, type)) }
+
+    LaunchedEffect(liked) {
+        if (liked != profileViewModel.isFavorite(id, type)) {
+            try {
+                profileViewModel.markAsFavorite(liked, id, type)
+            } catch (e: Exception) {
+                liked = !liked
+                e.printStackTrace()
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         when (type) {

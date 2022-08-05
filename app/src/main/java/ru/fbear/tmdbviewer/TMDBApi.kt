@@ -7,6 +7,8 @@ import ru.fbear.tmdbviewer.model.auth.AuthToken
 import ru.fbear.tmdbviewer.model.auth.NewSession
 import ru.fbear.tmdbviewer.model.detail.movie.MovieDetailResponseWithCredits
 import ru.fbear.tmdbviewer.model.detail.tv.TVDetailResponseWithCredits
+import ru.fbear.tmdbviewer.model.favorite.movie.FavoriteMovies
+import ru.fbear.tmdbviewer.model.favorite.tv.FavoriteTVs
 import ru.fbear.tmdbviewer.model.popular.movie.PopularMovies
 import ru.fbear.tmdbviewer.model.popular.tv.PopularTVs
 import ru.fbear.tmdbviewer.model.search.movie.SearchMovie
@@ -84,6 +86,33 @@ interface TMDBApi {
         @Query("session_id") sessionId: String
     ): AccountDetails
 
+    @GET("/3/account/{account_id}/favorite/movies")
+    suspend fun getFavouriteMoviesForAccount(
+        @Path("account_id") accountId: Int,
+        @Query("api_key") apiKey: String,
+        @Query("session_id") sessionId: String,
+        @Query("language") language: String,
+        @Query("page") page: Int
+    ): FavoriteMovies
+
+    @GET("/3/account/{account_id}/favorite/movies")
+    suspend fun getFavouriteTVsForAccount(
+        @Path("account_id") accountId: Int,
+        @Query("api_key") apiKey: String,
+        @Query("session_id") sessionId: String,
+        @Query("language") language: String,
+        @Query("page") page: Int
+    ): FavoriteTVs
+
+    @Headers("Content-Type: application/json")
+    @POST("/3/account/{account_id}/favorite")
+    suspend fun markAsFavorite(
+        @Path("account_id") accountId: Int,
+        @Query("api_key") apiKey: String,
+        @Query("session_id") sessionId: String,
+        @Body request: MarkAsFavoriteRequest
+    ): MarkAsFavoriteResponse
+
 }
 
 data class ValidateAuthTokenRequest(
@@ -94,4 +123,15 @@ data class ValidateAuthTokenRequest(
 
 data class CreateNewTokenRequest(
     @SerializedName("request_token") val requestToken: String
+)
+
+data class MarkAsFavoriteRequest(
+    @SerializedName("favorite") val favorite: Boolean,
+    @SerializedName("media_id") val mediaId: Int,
+    @SerializedName("media_type") val mediaType: String
+)
+
+data class MarkAsFavoriteResponse(
+    @SerializedName("status_code") val statusCode: Int,
+    @SerializedName("status_message") val statusMessage: String
 )
