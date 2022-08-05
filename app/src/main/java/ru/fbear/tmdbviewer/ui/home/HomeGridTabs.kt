@@ -1,5 +1,6 @@
 package ru.fbear.tmdbviewer.ui.home
 
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.material.Icon
 import androidx.compose.material.LeadingIconTab
@@ -40,10 +41,16 @@ sealed class TabItem(
     object TV : TabItem(Icons.Filled.LiveTv, R.string.tv)
 }
 
+
 @Preview(
     name = "dark theme",
     group = "themes",
-    uiMode = UI_MODE_NIGHT_YES,
+    uiMode = UI_MODE_NIGHT_YES
+)
+@Preview(
+    name = "day theme",
+    group = "themes",
+    uiMode = UI_MODE_NIGHT_NO
 )
 @Preview(
     name = "ru lang",

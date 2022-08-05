@@ -1,15 +1,20 @@
 package ru.fbear.tmdbviewer.ui.profile
 
-import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,51 +62,61 @@ fun ProfileFavoriteList(
     }
 }
 
+
 @Preview(
     name = "dark theme",
     group = "themes",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    heightDp = 256
+    uiMode = UI_MODE_NIGHT_YES,
+    heightDp = 350
+)
+@Preview(
+    name = "day theme",
+    group = "themes",
+    uiMode = UI_MODE_NIGHT_NO,
+    heightDp = 350
 )
 @Preview(
     name = "ru lang",
     group = "language",
     locale = "RU",
-    heightDp = 256
+    heightDp = 350
 )
 @Preview(
     name = "en lang",
     group = "language",
     locale = "EN",
-    heightDp = 256
+    heightDp = 350
 )
 @Preview(
     name = "small font",
     group = "font scales",
     fontScale = 0.5f,
-    heightDp = 256
+    heightDp = 350
 )
 @Preview(
     name = "large font",
     group = "font scales",
     fontScale = 1.5f,
-    heightDp = 256
+    heightDp = 350
 )
 @Composable
 fun ProfileFavoriteListPreview() {
     TMDBviewerTheme {
-        ProfileFavoriteList(
-            type = Type.Movie,
-            favoriteList = List(15) {
-                object : FavoriteListEntry {
-                    override val id = it
-                    override val posterPath: String? = null
-                    override val name: String = "Movie $it"
-
-                }
-            },
-            onLoadMore = {},
-            onClick = {}
-        )
+        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colors.onBackground) {
+            Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
+                ProfileFavoriteList(
+                    type = Type.Movie,
+                    favoriteList = List(15) {
+                        object : FavoriteListEntry {
+                            override val id = it
+                            override val posterPath = "/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg"
+                            override val name: String = "Thor: Love and Thunder"
+                        }
+                    },
+                    onLoadMore = {},
+                    onClick = {}
+                )
+            }
+        }
     }
 }

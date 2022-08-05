@@ -1,6 +1,8 @@
 package ru.fbear.tmdbviewer.ui.profile
 
-import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -120,10 +122,16 @@ fun ProfileLogin(
     }
 }
 
+
 @Preview(
     name = "dark theme",
     group = "themes",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    uiMode = UI_MODE_NIGHT_YES
+)
+@Preview(
+    name = "day theme",
+    group = "themes",
+    uiMode = UI_MODE_NIGHT_NO
 )
 @Preview(
     name = "ru lang",
@@ -148,8 +156,12 @@ fun ProfileLogin(
 @Composable
 fun ProfileLoginPreview() {
     TMDBviewerTheme {
-        ProfileLogin(
-            onLoginRequest = { _, _ -> return@ProfileLogin true }
-        )
+        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colors.onBackground) {
+            Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
+                ProfileLogin(
+                    onLoginRequest = { _, _ -> return@ProfileLogin true }
+                )
+            }
+        }
     }
 }

@@ -1,18 +1,21 @@
 package ru.fbear.tmdbviewer.ui.search
 
-import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.TextField
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 
 @Composable
 fun SearchBar(value: String, onValueChange: (String) -> Unit) {
@@ -34,23 +37,16 @@ fun SearchBar(value: String, onValueChange: (String) -> Unit) {
     )
 }
 
+
 @Preview(
     name = "dark theme",
     group = "themes",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    showBackground = true
+    uiMode = UI_MODE_NIGHT_YES,
 )
 @Preview(
-    name = "ru lang",
-    group = "language",
-    locale = "RU",
-    showBackground = true
-)
-@Preview(
-    name = "en lang",
-    group = "language",
-    locale = "EN",
-    showBackground = true
+    name = "day theme",
+    group = "themes",
+    uiMode = UI_MODE_NIGHT_NO,
 )
 @Preview(
     name = "small font",
@@ -66,5 +62,11 @@ fun SearchBar(value: String, onValueChange: (String) -> Unit) {
 )
 @Composable
 fun SearchBarPreview() {
-    SearchBar("") {}
+    TMDBviewerTheme {
+        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colors.onBackground) {
+            Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
+                SearchBar("Thor: Love and Thunder") {}
+            }
+        }
+    }
 }

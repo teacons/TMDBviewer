@@ -46,7 +46,9 @@ fun AppNavigationGraph(
             )
         }
         searchGraph(navController, searchViewModel, profileViewModel)
-        composable(route = BottomNavScreen.Profile.route) { Profile(profileViewModel) }
+        composable(route = BottomNavScreen.Profile.route) {
+            Profile(navController, profileViewModel)
+        }
     }
 }
 

@@ -1,6 +1,8 @@
 package ru.fbear.tmdbviewer.ui.profile
 
-import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -103,10 +105,16 @@ fun ProfileHeader(
     }
 }
 
+
 @Preview(
     name = "dark theme",
     group = "themes",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    uiMode = UI_MODE_NIGHT_YES
+)
+@Preview(
+    name = "day theme",
+    group = "themes",
+    uiMode = UI_MODE_NIGHT_NO
 )
 @Preview(
     name = "ru lang",
@@ -131,14 +139,18 @@ fun ProfileHeader(
 @Composable
 fun ProfileHeaderPreview() {
     TMDBviewerTheme {
-        ProfileHeader(
-            gravatarHash = "205e460b479e2e5b48aec07710c08d50",
-            tmdbAvatarPath = null,
-            id = 1000000,
-            language = "ru",
-            region = "RU",
-            name = "Steve",
-            username = "SteveForever1990"
-        )
+        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colors.onBackground) {
+            Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
+                ProfileHeader(
+                    gravatarHash = "205e460b479e2e5b48aec07710c08d50",
+                    tmdbAvatarPath = null,
+                    id = 1000000,
+                    language = "ru",
+                    region = "RU",
+                    name = "Steve",
+                    username = "SteveForever1990"
+                )
+            }
+        }
     }
 }

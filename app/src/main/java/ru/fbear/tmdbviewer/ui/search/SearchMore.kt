@@ -1,6 +1,7 @@
 package ru.fbear.tmdbviewer.ui.search
 
-import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,9 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import ru.fbear.tmdbviewer.R
 import ru.fbear.tmdbviewer.Type
 import ru.fbear.tmdbviewer.model.SearchListEntry
@@ -42,18 +41,49 @@ fun SearchMore(
 
     val isLogined by profileViewModel.isLogined.collectAsState()
 
+
+    SearchMore(
+        title = stringResource(type.title),
+        searched = searched,
+        isLogined = isLogined,
+        loadMore = {
+            when (type) {
+                Type.Movie -> searchViewModel.searchMovies()
+                Type.TV -> searchViewModel.searchTV()
+            }
+        },
+        isLiked = { id -> profileViewModel.isFavorite(id, type) },
+        onItemClick = { id -> navController.navigate("detail/${type.string}/${id}") },
+        onLikedChanged = { liked, id -> profileViewModel.markAsFavorite(liked, id, type) },
+        onBackPressed = { navController.popBackStack() }
+    )
+}
+
+@Composable
+private fun SearchMore(
+    title: String,
+    searched: List<SearchListEntry>,
+    isLogined: Boolean,
+    loadMore: () -> Unit,
+    isLiked: (Int) -> Boolean,
+    onItemClick: (Int) -> Unit,
+    onLikedChanged: suspend (Boolean, Int) -> Unit,
+    onBackPressed: () -> Unit
+) {
     val columnState = rememberLazyListState()
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
-
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
-                title = { Text(text = stringResource(id = type.title)) },
+                title = { Text(text = title) },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null)
+                    IconButton(onClick = onBackPressed) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = null
+                        )
                     }
                 }
             )
@@ -69,29 +99,32 @@ fun SearchMore(
                     posterPath = item.posterPath,
                     title = item.name,
                     voteAverage = item.voteAverage,
-                    isLiked = { profileViewModel.isFavorite(item.id, type) },
-                    onClick = { navController.navigate("detail/${type.string}/${item.id}") },
+                    isLiked = { isLiked(item.id) },
+                    onClick = { onItemClick(item.id) },
                     onLikedChanged = { liked ->
-                        if (isLogined) profileViewModel.markAsFavorite(liked, item.id, type)
-                        else scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.need_login))
+                        if (isLogined) onLikedChanged(liked, item.id)
+                        else scaffoldState.snackbarHostState.showSnackbar(
+                            context.getString(R.string.need_login)
+                        )
                     }
                 )
             }
         }
 
-        columnState.OnBottomReached {
-            when (type) {
-                Type.Movie -> searchViewModel.searchMovies()
-                Type.TV -> searchViewModel.searchTV()
-            }
-        }
+        columnState.OnBottomReached(loadMore)
     }
 }
+
 
 @Preview(
     name = "dark theme",
     group = "themes",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    uiMode = UI_MODE_NIGHT_YES
+)
+@Preview(
+    name = "day theme",
+    group = "themes",
+    uiMode = UI_MODE_NIGHT_NO
 )
 @Preview(
     name = "ru lang",
@@ -116,6 +149,22 @@ fun SearchMore(
 @Composable
 fun SearchMorePreview() {
     TMDBviewerTheme {
-        SearchMore(rememberNavController(), Type.Movie, viewModel(), viewModel())
+        SearchMore(
+            title = stringResource(Type.Movie.title),
+            searched = List(15) {
+                object : SearchListEntry {
+                    override val id = it
+                    override val posterPath = "/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg"
+                    override val name = "Thor: Love and Thunder"
+                    override val voteAverage = 2 / 3F * it
+                }
+            },
+            isLogined = true,
+            loadMore = {},
+            isLiked = { it % 2 == 0 },
+            onItemClick = {},
+            onLikedChanged = { _, _ -> },
+            onBackPressed = {}
+        )
     }
 }

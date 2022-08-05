@@ -1,6 +1,8 @@
 package ru.fbear.tmdbviewer.ui.detail
 
-import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -89,44 +91,49 @@ fun DetailHeader(title: String, year: Int, runtime: Int, posterPath: String?) {
     }
 }
 
+
 @Preview(
     name = "dark theme",
     group = "themes",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    showBackground = true
+    uiMode = UI_MODE_NIGHT_YES
+)
+@Preview(
+    name = "day theme",
+    group = "themes",
+    uiMode = UI_MODE_NIGHT_NO
 )
 @Preview(
     name = "ru lang",
     group = "language",
-    locale = "RU",
-    showBackground = true
+    locale = "RU"
 )
 @Preview(
     name = "en lang",
     group = "language",
-    locale = "EN",
-    showBackground = true
+    locale = "EN"
 )
 @Preview(
     name = "small font",
     group = "font scales",
-    fontScale = 0.5f,
-    showBackground = true
+    fontScale = 0.5f
 )
 @Preview(
     name = "large font",
     group = "font scales",
-    fontScale = 1.5f,
-    showBackground = true
+    fontScale = 1.5f
 )
 @Composable
 fun DetailHeaderPreview() {
     TMDBviewerTheme {
-        DetailHeader(
-            title = "Thor: Love and Thunder",
-            year = 2022,
-            runtime = 119,
-            posterPath = "/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg"
-        )
+        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colors.onBackground) {
+            Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
+                DetailHeader(
+                    title = "Thor: Love and Thunder",
+                    year = 2022,
+                    runtime = 119,
+                    posterPath = "/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg"
+                )
+            }
+        }
     }
 }

@@ -1,15 +1,15 @@
 package ru.fbear.tmdbviewer.ui.profile
 
-import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -65,43 +65,58 @@ fun ProfileFavoriteItem(posterPath: String?, name: String, onClick: () -> Unit) 
     }
 }
 
+
 @Preview(
     name = "dark theme",
     group = "themes",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    uiMode = UI_MODE_NIGHT_YES,
+    widthDp = 128
+)
+@Preview(
+    name = "day theme",
+    group = "themes",
+    uiMode = UI_MODE_NIGHT_NO,
     widthDp = 128
 )
 @Preview(
     name = "ru lang",
     group = "language",
     locale = "RU",
-    widthDp = 128
+    widthDp = 128,
+    showBackground = true
 )
 @Preview(
     name = "en lang",
     group = "language",
     locale = "EN",
-    widthDp = 128
+    widthDp = 128,
+    showBackground = true
 )
 @Preview(
     name = "small font",
     group = "font scales",
     fontScale = 0.5f,
-    widthDp = 128
+    widthDp = 128,
+    showBackground = true
 )
 @Preview(
     name = "large font",
     group = "font scales",
     fontScale = 1.5f,
-    widthDp = 128
+    widthDp = 128,
+    showBackground = true
 )
 @Composable
 fun ProfileFavoriteItemPreview() {
     TMDBviewerTheme {
-        ProfileFavoriteItem(
-            posterPath = "/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg",
-            name = "Thor: Love and Thunder",
-            onClick = {}
-        )
+        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colors.onBackground) {
+            Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
+                ProfileFavoriteItem(
+                    posterPath = "/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg",
+                    name = "Thor: Love and Thunder",
+                    onClick = {}
+                )
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 package ru.fbear.tmdbviewer.ui.home
 
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -56,7 +57,8 @@ fun HomeGridItem(
             ) {
                 Icon(
                     imageVector = if (liked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.background
                 )
             }
             Column(
@@ -101,10 +103,17 @@ fun HomeGridItem(
     }
 }
 
+
 @Preview(
     name = "dark theme",
     group = "themes",
     uiMode = UI_MODE_NIGHT_YES,
+    widthDp = 128
+)
+@Preview(
+    name = "day theme",
+    group = "themes",
+    uiMode = UI_MODE_NIGHT_NO,
     widthDp = 128
 )
 @Preview(
@@ -136,7 +145,7 @@ fun HomeGridItemPreview() {
     TMDBviewerTheme {
         HomeGridItem(
             posterPath = "/pIkRyD18kl4FhoCNQuWxWu5cBLM.jpg",
-            title = "Film name",
+            title = "Thor: Love and Thunder",
             isLiked = { return@HomeGridItem true },
             onClick = {},
             onLikeChanged = {}

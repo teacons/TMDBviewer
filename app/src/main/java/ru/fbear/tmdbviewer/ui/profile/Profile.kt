@@ -1,6 +1,7 @@
 package ru.fbear.tmdbviewer.ui.profile
 
-import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import ru.fbear.tmdbviewer.R
 import ru.fbear.tmdbviewer.Type
 import ru.fbear.tmdbviewer.model.FavoriteListEntry
@@ -26,7 +28,7 @@ import ru.fbear.tmdbviewer.model.account.TmdbAvatar
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 
 @Composable
-fun Profile(viewModel: ProfileViewModel) {
+fun Profile(navController: NavController, viewModel: ProfileViewModel) {
 
     val accountDetails by viewModel.accountDetails.collectAsState(null)
 
@@ -56,7 +58,8 @@ fun Profile(viewModel: ProfileViewModel) {
                         Type.Movie -> viewModel.getFavoriteMovies()
                         Type.TV -> viewModel.getFavoriteTVs()
                     }
-                }
+                },
+                onFavoriteClick = { id, type -> navController.navigate("detail/${type.string}/$id") }
             )
         } else {
             ProfileLogin(onLoginRequest = { login, password -> viewModel.login(login, password) })
@@ -70,7 +73,8 @@ private fun Profile(
     favoriteTVs: List<FavoriteListEntry>,
     onLoadMore: (Type) -> Unit,
     accountDetails: AccountDetails,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onFavoriteClick: (Int, Type) -> Unit
 ) {
     Surface(
         color = MaterialTheme.colors.background,
@@ -94,7 +98,8 @@ private fun Profile(
             ProfileFavorite(
                 favoriteMovies = favoriteMovies,
                 favoriteTVs = favoriteTVs,
-                onLoadMore = onLoadMore
+                onLoadMore = onLoadMore,
+                onClick = onFavoriteClick
             )
             Button(
                 onClick = onLogout,
@@ -106,10 +111,16 @@ private fun Profile(
     }
 }
 
+
 @Preview(
     name = "dark theme",
     group = "themes",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    uiMode = UI_MODE_NIGHT_YES
+)
+@Preview(
+    name = "day theme",
+    group = "themes",
+    uiMode = UI_MODE_NIGHT_NO
 )
 @Preview(
     name = "ru lang",
@@ -159,7 +170,8 @@ fun ProfilePreview() {
                 username = "SteveForever1990"
             ),
             onLoadMore = {},
-            onLogout = {}
+            onLogout = {},
+            onFavoriteClick = { _, _ -> }
         )
     }
 }

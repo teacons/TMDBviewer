@@ -9,17 +9,18 @@ import ru.fbear.tmdbviewer.model.FavoriteListEntry
 fun ProfileFavorite(
     favoriteMovies: List<FavoriteListEntry>,
     favoriteTVs: List<FavoriteListEntry>,
-    onLoadMore: (Type) -> Unit
+    onLoadMore: (Type) -> Unit,
+    onClick: (Int, Type) -> Unit
 ) {
     ProfileFavoriteList(
         type = Type.Movie,
         favoriteList = favoriteMovies,
         onLoadMore = onLoadMore,
-        onClick = {})
+        onClick = { onClick(it, Type.Movie) })
     if (favoriteMovies.isNotEmpty()) Divider()
     ProfileFavoriteList(
         type = Type.TV,
         favoriteList = favoriteTVs,
         onLoadMore = onLoadMore,
-        onClick = {})
+        onClick = { onClick(it, Type.TV) })
 }

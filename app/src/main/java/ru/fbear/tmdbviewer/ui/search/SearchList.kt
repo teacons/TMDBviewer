@@ -1,18 +1,23 @@
 package ru.fbear.tmdbviewer.ui.search
 
-import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
+import androidx.compose.material.LocalContentColor
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ru.fbear.tmdbviewer.R
 import ru.fbear.tmdbviewer.Type
 import ru.fbear.tmdbviewer.model.SearchListEntry
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
@@ -25,10 +30,8 @@ fun SearchList(
     totalTVResults: Int,
     isLiked: (Int, Type) -> Boolean,
     onLikedChange: suspend (Boolean, Int, Type) -> Unit,
-    onShowAllMovies: () -> Unit,
-    onShowAllTV: () -> Unit,
-    onMovieItemClick: (Int) -> Unit,
-    onTVItemClick: (Int) -> Unit
+    onShowAll: (Type) -> Unit,
+    onItemClick: (Int, Type) -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -38,34 +41,40 @@ fun SearchList(
     ) {
         if (searchedMovies.isNotEmpty()) {
             SearchSubList(
-                title = stringResource(id = R.string.movies),
+                title = stringResource(id = Type.Movie.title),
                 items = searchedMovies,
                 totalResults = totalMoviesResults,
                 isLiked = { isLiked(it, Type.Movie) },
                 onLikedChange = { liked, id -> onLikedChange(liked, id, Type.Movie) },
-                onShowAllClick = onShowAllMovies,
-                onItemClick = onMovieItemClick
+                onShowAllClick = { onShowAll(Type.Movie) },
+                onItemClick = { id -> onItemClick(id, Type.Movie) }
             )
             if (searchedTV.isNotEmpty()) Divider()
         }
         if (searchedTV.isNotEmpty()) {
             SearchSubList(
-                title = stringResource(id = R.string.tv),
+                title = stringResource(id = Type.TV.title),
                 items = searchedTV,
                 totalResults = totalTVResults,
                 isLiked = { isLiked(it, Type.TV) },
                 onLikedChange = { liked, id -> onLikedChange(liked, id, Type.TV) },
-                onShowAllClick = onShowAllTV,
-                onItemClick = onTVItemClick
+                onShowAllClick = { onShowAll(Type.TV) },
+                onItemClick = { id -> onItemClick(id, Type.TV) }
             )
         }
     }
 }
 
+
 @Preview(
     name = "dark theme",
     group = "themes",
-    uiMode = Configuration.UI_MODE_NIGHT_YES
+    uiMode = UI_MODE_NIGHT_YES
+)
+@Preview(
+    name = "day theme",
+    group = "themes",
+    uiMode = UI_MODE_NIGHT_NO,
 )
 @Preview(
     name = "ru lang",
@@ -106,17 +115,19 @@ fun SearchListPreview() {
         }
     }
     TMDBviewerTheme {
-        SearchList(
-            searchedMovies = filmItems,
-            searchedTV = tvItems,
-            totalMoviesResults = 15,
-            totalTVResults = 15,
-            isLiked = { id, _ -> id % 2 == 0 },
-            onLikedChange = { _, _, _ -> },
-            onShowAllMovies = {},
-            onShowAllTV = {},
-            onMovieItemClick = {},
-            onTVItemClick = {}
-        )
+        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colors.onBackground) {
+            Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
+                SearchList(
+                    searchedMovies = filmItems,
+                    searchedTV = tvItems,
+                    totalMoviesResults = 15,
+                    totalTVResults = 15,
+                    isLiked = { id, _ -> id % 2 == 0 },
+                    onLikedChange = { _, _, _ -> },
+                    onShowAll = {},
+                    onItemClick = { _, _ -> }
+                )
+            }
+        }
     }
 }

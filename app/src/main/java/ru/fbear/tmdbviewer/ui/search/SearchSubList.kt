@@ -1,12 +1,18 @@
 package ru.fbear.tmdbviewer.ui.search
 
-import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,35 +53,36 @@ fun SearchSubList(
     }
 }
 
+
 @Preview(
     name = "dark theme",
     group = "themes",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    showBackground = true
+    uiMode = UI_MODE_NIGHT_YES,
+)
+@Preview(
+    name = "day theme",
+    group = "themes",
+    uiMode = UI_MODE_NIGHT_NO,
 )
 @Preview(
     name = "ru lang",
     group = "language",
     locale = "RU",
-    showBackground = true
 )
 @Preview(
     name = "en lang",
     group = "language",
     locale = "EN",
-    showBackground = true
 )
 @Preview(
     name = "small font",
     group = "font scales",
     fontScale = 0.5f,
-    showBackground = true
 )
 @Preview(
     name = "large font",
     group = "font scales",
     fontScale = 1.5f,
-    showBackground = true
 )
 @Composable
 fun SearchSubListPreview() {
@@ -88,14 +95,18 @@ fun SearchSubListPreview() {
         }
     }
     TMDBviewerTheme {
-        SearchSubList(
-            "Films",
-            items,
-            15,
-            onShowAllClick = {},
-            onItemClick = {},
-            isLiked = { it % 2 == 0 },
-            onLikedChange = { _, _ -> }
-        )
+        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colors.onBackground) {
+            Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
+                SearchSubList(
+                    "Films",
+                    items,
+                    15,
+                    onShowAllClick = {},
+                    onItemClick = {},
+                    isLiked = { it % 2 == 0 },
+                    onLikedChange = { _, _ -> }
+                )
+            }
+        }
     }
 }

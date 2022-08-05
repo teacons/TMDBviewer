@@ -1,6 +1,8 @@
 package ru.fbear.tmdbviewer.ui.detail
 
-import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -74,43 +76,38 @@ fun DetailCastListItem(profilePath: String?, name: String, character: String) {
     }
 }
 
+
 @Preview(
     name = "dark theme",
     group = "themes",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    widthDp = 128
+    uiMode = UI_MODE_NIGHT_YES
 )
 @Preview(
-    name = "ru lang",
-    group = "language",
-    locale = "RU",
-    widthDp = 128
-)
-@Preview(
-    name = "en lang",
-    group = "language",
-    locale = "EN",
-    widthDp = 128
+    name = "day theme",
+    group = "themes",
+    uiMode = UI_MODE_NIGHT_NO
 )
 @Preview(
     name = "small font",
     group = "font scales",
-    fontScale = 0.5f,
-    widthDp = 128
+    fontScale = 0.5f
 )
 @Preview(
     name = "large font",
     group = "font scales",
-    fontScale = 1.5f,
-    widthDp = 128
+    fontScale = 1.5f
 )
 @Composable
 fun DetailCastListItemPreview() {
     TMDBviewerTheme {
-        DetailCastListItem(
-            profilePath = "/jpurJ9jAcLCYjgHHfYF32m3zJYm.jpg\"",
-            name = "Chris Hemsworth",
-            character = "Thor Odinson"
-        )
+        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colors.onBackground) {
+            Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
+                DetailCastListItem(
+                    profilePath = "/jpurJ9jAcLCYjgHHfYF32m3zJYm.jpg\"",
+                    name = "Chris Hemsworth",
+                    character = "Thor Odinson"
+                )
+            }
+        }
     }
 }
