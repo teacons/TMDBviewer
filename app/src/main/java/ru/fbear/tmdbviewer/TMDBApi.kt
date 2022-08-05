@@ -95,7 +95,7 @@ interface TMDBApi {
         @Query("page") page: Int
     ): FavoriteMovies
 
-    @GET("/3/account/{account_id}/favorite/movies")
+    @GET("/3/account/{account_id}/favorite/tv")
     suspend fun getFavouriteTVsForAccount(
         @Path("account_id") accountId: Int,
         @Query("api_key") apiKey: String,

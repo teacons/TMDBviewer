@@ -18,4 +18,4 @@ data class MovieListResultObject(
     @SerializedName("video") val video: Boolean,
     @SerializedName("vote_average") override val voteAverage: Float,
     @SerializedName("vote_count") val voteCount: Int
-) : HomeGridEntry, SearchListEntry
+) : HomeGridEntry, SearchListEntry, FavoriteListEntry

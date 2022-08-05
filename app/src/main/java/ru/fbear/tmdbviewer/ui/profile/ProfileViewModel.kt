@@ -16,6 +16,8 @@ import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.fbear.tmdbviewer.*
+import ru.fbear.tmdbviewer.model.MovieListResultObject
+import ru.fbear.tmdbviewer.model.TVListResultObject
 import ru.fbear.tmdbviewer.model.account.AccountDetails
 import java.util.*
 
@@ -44,6 +46,14 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 
     private val favoriteTVIds = MutableStateFlow(emptyList<Int>())
 
+    private val mutableFavoriteMovies = MutableStateFlow(emptyList<MovieListResultObject>())
+    val favoriteMovies = mutableFavoriteMovies.asStateFlow()
+    private var favoriteMoviesLastPage = 0
+
+    private val mutableFavoriteTVs = MutableStateFlow(emptyList<TVListResultObject>())
+    val favoriteTVs = mutableFavoriteTVs.asStateFlow()
+    private var favoriteTVsLastPage = 0
+
     init {
         viewModelScope.launch {
             sessionIdFlow.collect {
@@ -61,8 +71,48 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 
     fun isFavorite(id: Int, type: Type): Boolean {
         return when (type) {
-            Type.Movie -> id in this.favoriteMovieIds.value
-            Type.TV -> id in this.favoriteTVIds.value
+            Type.Movie -> id in favoriteMovieIds.value
+            Type.TV -> id in favoriteTVIds.value
+        }
+    }
+
+    fun getFavoriteMovies() {
+        val language = Locale.getDefault().toLanguageTag()
+        viewModelScope.launch(Dispatchers.IO) {
+            val accountId = accountDetails.value!!.id
+            try {
+                api.getFavouriteMoviesForAccount(
+                    accountId,
+                    apiKey,
+                    sessionId!!,
+                    language,
+                    favoriteMoviesLastPage + 1
+                ) .also {
+                    mutableFavoriteMovies.value += it.results
+                    favoriteMoviesLastPage = it.page
+                }
+            } catch (e: Exception) {
+            }
+        }
+    }
+
+    fun getFavoriteTVs() {
+        val language = Locale.getDefault().toLanguageTag()
+        viewModelScope.launch(Dispatchers.IO) {
+            val accountId = accountDetails.value!!.id
+            try {
+                api.getFavouriteTVsForAccount(
+                    accountId,
+                    apiKey,
+                    sessionId!!,
+                    language,
+                    favoriteTVsLastPage + 1
+                ) .also {
+                    mutableFavoriteTVs.value += it.results
+                    favoriteTVsLastPage = it.page
+                }
+            } catch (e: Exception) {
+            }
         }
     }
 

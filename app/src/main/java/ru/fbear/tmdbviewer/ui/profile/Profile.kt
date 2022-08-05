@@ -17,6 +17,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.fbear.tmdbviewer.R
+import ru.fbear.tmdbviewer.Type
+import ru.fbear.tmdbviewer.model.FavoriteListEntry
 import ru.fbear.tmdbviewer.model.account.AccountDetails
 import ru.fbear.tmdbviewer.model.account.Avatar
 import ru.fbear.tmdbviewer.model.account.Gravatar
@@ -30,6 +32,9 @@ fun Profile(viewModel: ProfileViewModel) {
 
     val isLogined by viewModel.isLogined.collectAsState()
 
+    val favoriteMovies by viewModel.favoriteMovies.collectAsState(emptyList())
+    val favoriteTVs by viewModel.favoriteTVs.collectAsState(emptyList())
+
     Surface(
         color = MaterialTheme.colors.background,
         contentColor = MaterialTheme.colors.onBackground,
@@ -41,7 +46,18 @@ fun Profile(viewModel: ProfileViewModel) {
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) { CircularProgressIndicator() }
-            else Profile(accountDetails!!) { viewModel.logout() }
+            else Profile(
+                favoriteMovies = favoriteMovies,
+                favoriteTVs = favoriteTVs,
+                accountDetails = accountDetails!!,
+                onLogout = { viewModel.logout() },
+                onLoadMore = { type ->
+                    when (type) {
+                        Type.Movie -> viewModel.getFavoriteMovies()
+                        Type.TV -> viewModel.getFavoriteTVs()
+                    }
+                }
+            )
         } else {
             ProfileLogin(onLoginRequest = { login, password -> viewModel.login(login, password) })
         }
@@ -49,7 +65,13 @@ fun Profile(viewModel: ProfileViewModel) {
 }
 
 @Composable
-private fun Profile(accountDetails: AccountDetails, onLogout: () -> Unit) {
+private fun Profile(
+    favoriteMovies: List<FavoriteListEntry>,
+    favoriteTVs: List<FavoriteListEntry>,
+    onLoadMore: (Type) -> Unit,
+    accountDetails: AccountDetails,
+    onLogout: () -> Unit
+) {
     Surface(
         color = MaterialTheme.colors.background,
         contentColor = MaterialTheme.colors.onBackground,
@@ -69,6 +91,11 @@ private fun Profile(accountDetails: AccountDetails, onLogout: () -> Unit) {
                 username = accountDetails.username
             )
             Divider()
+            ProfileFavorite(
+                favoriteMovies = favoriteMovies,
+                favoriteTVs = favoriteTVs,
+                onLoadMore = onLoadMore
+            )
             Button(
                 onClick = onLogout,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -108,7 +135,21 @@ private fun Profile(accountDetails: AccountDetails, onLogout: () -> Unit) {
 fun ProfilePreview() {
     TMDBviewerTheme {
         Profile(
-            AccountDetails(
+            favoriteMovies = List(15) {
+                object : FavoriteListEntry {
+                    override val id = it
+                    override val posterPath: String? = null
+                    override val name = "Movie $it"
+                }
+            },
+            favoriteTVs = List(15) {
+                object : FavoriteListEntry {
+                    override val id = it
+                    override val posterPath: String? = null
+                    override val name = "TV $it"
+                }
+            },
+            accountDetails = AccountDetails(
                 avatar = Avatar(Gravatar("205e460b479e2e5b48aec07710c08d50"), TmdbAvatar(null)),
                 id = 1000000,
                 includeAdult = false,
@@ -116,7 +157,9 @@ fun ProfilePreview() {
                 iso31661 = "RU",
                 name = "Steve",
                 username = "SteveForever1990"
-            )
-        ) {}
+            ),
+            onLoadMore = {},
+            onLogout = {}
+        )
     }
 }

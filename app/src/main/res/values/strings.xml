@@ -20,4 +20,6 @@
     <string name="name">Name</string>
     <string name="login">Login</string>
     <string name="logout">Logout</string>
+    <string name="favorite_movies">Favorite movies</string>
+    <string name="favorite_tv">Favorite TV</string>
 </resources>

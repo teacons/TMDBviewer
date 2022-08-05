@@ -21,5 +21,7 @@
     <string name="name">Имя</string>
     <string name="login">Войти</string>
     <string name="logout">Выйти</string>
+    <string name="favorite_movies">Любимые фильмы</string>
+    <string name="favorite_tv">Любимые сериалы</string>
 
 </resources>

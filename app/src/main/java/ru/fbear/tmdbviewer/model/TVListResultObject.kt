@@ -17,4 +17,4 @@ data class TVListResultObject(
     @SerializedName("poster_path") override val posterPath: String?,
     @SerializedName("vote_average") override val voteAverage: Float,
     @SerializedName("vote_count") val voteCount: Int
-) : HomeGridEntry, SearchListEntry
+) : HomeGridEntry, SearchListEntry, FavoriteListEntry
