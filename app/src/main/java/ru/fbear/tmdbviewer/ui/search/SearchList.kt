@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.fbear.tmdbviewer.R
+import ru.fbear.tmdbviewer.Type
 import ru.fbear.tmdbviewer.model.SearchListEntry
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 
@@ -22,6 +23,8 @@ fun SearchList(
     searchedTV: List<SearchListEntry>,
     totalMoviesResults: Int,
     totalTVResults: Int,
+    isLiked: (Int, Type) -> Boolean,
+    onLikedChange: suspend (Boolean, Int, Type) -> Unit,
     onShowAllMovies: () -> Unit,
     onShowAllTV: () -> Unit,
     onMovieItemClick: (Int) -> Unit,
@@ -38,6 +41,8 @@ fun SearchList(
                 title = stringResource(id = R.string.movies),
                 items = searchedMovies,
                 totalResults = totalMoviesResults,
+                isLiked = { isLiked(it, Type.Movie) },
+                onLikedChange = { liked, id -> onLikedChange(liked, id, Type.Movie) },
                 onShowAllClick = onShowAllMovies,
                 onItemClick = onMovieItemClick
             )
@@ -48,6 +53,8 @@ fun SearchList(
                 title = stringResource(id = R.string.tv),
                 items = searchedTV,
                 totalResults = totalTVResults,
+                isLiked = { isLiked(it, Type.TV) },
+                onLikedChange = { liked, id -> onLikedChange(liked, id, Type.TV) },
                 onShowAllClick = onShowAllTV,
                 onItemClick = onTVItemClick
             )
@@ -104,6 +111,8 @@ fun SearchListPreview() {
             searchedTV = tvItems,
             totalMoviesResults = 15,
             totalTVResults = 15,
+            isLiked = { id, _ -> id % 2 == 0 },
+            onLikedChange = { _, _, _ -> },
             onShowAllMovies = {},
             onShowAllTV = {},
             onMovieItemClick = {},

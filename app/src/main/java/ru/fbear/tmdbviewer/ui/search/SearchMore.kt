@@ -21,11 +21,17 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import ru.fbear.tmdbviewer.Type
 import ru.fbear.tmdbviewer.model.SearchListEntry
+import ru.fbear.tmdbviewer.ui.profile.ProfileViewModel
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 import ru.fbear.tmdbviewer.ui.utils.OnBottomReached
 
 @Composable
-fun SearchMore(navController: NavController, type: Type, searchViewModel: SearchViewModel) {
+fun SearchMore(
+    navController: NavController,
+    type: Type,
+    searchViewModel: SearchViewModel,
+    profileViewModel: ProfileViewModel
+) {
 
     val searched: List<SearchListEntry> by when (type) {
         Type.Movie -> searchViewModel.searchedMovies.collectAsState()
@@ -56,7 +62,11 @@ fun SearchMore(navController: NavController, type: Type, searchViewModel: Search
                     posterPath = item.posterPath,
                     title = item.name,
                     voteAverage = item.voteAverage,
-                    onClick = { navController.navigate("detail/${type.string}/${item.id}") }
+                    isLiked = { profileViewModel.isFavorite(item.id, type) },
+                    onClick = { navController.navigate("detail/${type.string}/${item.id}") },
+                    onLikedChanged = { liked ->
+                        profileViewModel.markAsFavorite(liked, item.id, type)
+                    }
                 )
             }
         }
@@ -98,6 +108,6 @@ fun SearchMore(navController: NavController, type: Type, searchViewModel: Search
 @Composable
 fun SearchMorePreview() {
     TMDBviewerTheme {
-        SearchMore(rememberNavController(), Type.Movie, viewModel())
+        SearchMore(rememberNavController(), Type.Movie, viewModel(), viewModel())
     }
 }

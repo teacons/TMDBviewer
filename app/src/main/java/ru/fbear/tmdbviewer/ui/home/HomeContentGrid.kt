@@ -16,6 +16,8 @@ import ru.fbear.tmdbviewer.ui.utils.OnBottomReached
 @Composable
 fun HomeContentGrid(
     listItems: List<HomeGridEntry>,
+    isLiked: (Int) -> Boolean,
+    onLikedChange: suspend (Boolean, Int) -> Unit,
     onLoadMore: () -> Unit,
     onItemClick: (HomeGridEntry) -> Unit
 ) {
@@ -27,7 +29,13 @@ fun HomeContentGrid(
         state = gridState
     ) {
         items(listItems) { item ->
-            HomeGridItem(posterPath = item.posterPath, title = item.name) { onItemClick(item) }
+            HomeGridItem(
+                posterPath = item.posterPath,
+                title = item.name,
+                isLiked = { isLiked(item.id) },
+                onClick = { onItemClick(item) },
+                onLikeChanged = { onLikedChange(it, item.id) }
+            )
         }
     }
 
@@ -70,6 +78,12 @@ fun HomeContentGridPreview() {
         }
     }
     TMDBviewerTheme {
-        HomeContentGrid(listItems = items, onLoadMore = {}, onItemClick = {})
+        HomeContentGrid(
+            listItems = items,
+            onLoadMore = {},
+            onItemClick = {},
+            isLiked = { return@HomeContentGrid it % 2 == 0 },
+            onLikedChange = { _, _ -> }
+        )
     }
 }

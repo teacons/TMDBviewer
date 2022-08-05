@@ -11,10 +11,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import ru.fbear.tmdbviewer.Type
+import ru.fbear.tmdbviewer.ui.profile.ProfileViewModel
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 
 @Composable
-fun Home(navController: NavController, viewModel: HomeViewModel) {
+fun Home(
+    navController: NavController,
+    viewModel: HomeViewModel,
+    profileViewModel: ProfileViewModel
+) {
     val tabs = listOf(
         TabItem.Movies,
         TabItem.TV
@@ -36,6 +41,10 @@ fun Home(navController: NavController, viewModel: HomeViewModel) {
                 selectedTab = selectedTab,
                 popularMovies = popularMovies,
                 popularTVs = popularTVs,
+                isLiked = { id, type -> profileViewModel.isFavorite(id, type) },
+                onLikedChange = { liked, id, type ->
+                    profileViewModel.markAsFavorite(liked, id, type)
+                },
                 onLoadMoreMovies = { viewModel.getPopularMovies() },
                 onLoadMoreTV = { viewModel.getPopularTVs() },
             ) {
@@ -80,6 +89,6 @@ fun Home(navController: NavController, viewModel: HomeViewModel) {
 @Composable
 fun HomePreview() {
     TMDBviewerTheme {
-        Home(rememberNavController(), viewModel())
+        Home(rememberNavController(), viewModel(), viewModel())
     }
 }

@@ -38,8 +38,14 @@ fun AppNavigationGraph(
         modifier = modifier
     ) {
         detailGraph(navController, detailViewModel, profileViewModel)
-        composable(route = BottomNavScreen.Home.route) { Home(navController, homeViewModel) }
-        searchGraph(navController, searchViewModel)
+        composable(route = BottomNavScreen.Home.route) {
+            Home(
+                navController,
+                homeViewModel,
+                profileViewModel
+            )
+        }
+        searchGraph(navController, searchViewModel, profileViewModel)
         composable(route = BottomNavScreen.Profile.route) { Profile(profileViewModel) }
     }
 }

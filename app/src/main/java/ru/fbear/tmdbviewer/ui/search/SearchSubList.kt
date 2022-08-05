@@ -19,6 +19,8 @@ fun SearchSubList(
     title: String,
     items: List<SearchListEntry>,
     totalResults: Int,
+    isLiked: (Int) -> Boolean,
+    onLikedChange: suspend (Boolean, Int) -> Unit,
     onShowAllClick: () -> Unit,
     onItemClick: (Int) -> Unit
 ) {
@@ -34,7 +36,9 @@ fun SearchSubList(
                 posterPath = item.posterPath,
                 title = item.name,
                 voteAverage = item.voteAverage,
-                onClick = { onItemClick(item.id) }
+                isLiked = { isLiked(item.id) },
+                onClick = { onItemClick(item.id) },
+                onLikedChanged = { onLikedChange(it, item.id) }
             )
         }
         OutlinedButton(onClick = onShowAllClick) {
@@ -84,6 +88,14 @@ fun SearchSubListPreview() {
         }
     }
     TMDBviewerTheme {
-        SearchSubList("Films", items, 15, onShowAllClick = {}, onItemClick = {})
+        SearchSubList(
+            "Films",
+            items,
+            15,
+            onShowAllClick = {},
+            onItemClick = {},
+            isLiked = { it % 2 == 0 },
+            onLikedChange = { _, _ -> }
+        )
     }
 }

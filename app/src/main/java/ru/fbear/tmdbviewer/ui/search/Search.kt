@@ -16,10 +16,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import ru.fbear.tmdbviewer.Type
+import ru.fbear.tmdbviewer.ui.profile.ProfileViewModel
 import ru.fbear.tmdbviewer.ui.theme.TMDBviewerTheme
 
 @Composable
-fun Search(navController: NavController, searchViewModel: SearchViewModel) {
+fun Search(
+    navController: NavController,
+    searchViewModel: SearchViewModel,
+    profileViewModel: ProfileViewModel
+) {
     val searchTag by searchViewModel.searchTag.collectAsState()
 
     val searchedMovies by searchViewModel.searchedMovies.collectAsState()
@@ -41,6 +46,14 @@ fun Search(navController: NavController, searchViewModel: SearchViewModel) {
                     searchedTV = searchedTV,
                     totalMoviesResults = searchedMoviesTotalResult,
                     totalTVResults = searchedTVTotalResult,
+                    isLiked = { id, type -> profileViewModel.isFavorite(id, type) },
+                    onLikedChange = { liked, id, type ->
+                        profileViewModel.markAsFavorite(
+                            liked,
+                            id,
+                            type
+                        )
+                    },
                     onShowAllMovies = { navController.navigate("search/more/${Type.Movie.string}") },
                     onShowAllTV = { navController.navigate("search/more/${Type.TV.string}") },
                     onMovieItemClick = { navController.navigate("detail/${Type.Movie.string}/$it") },
@@ -87,6 +100,6 @@ fun Search(navController: NavController, searchViewModel: SearchViewModel) {
 @Composable
 fun SearchPreview() {
     TMDBviewerTheme {
-        Search(rememberNavController(), viewModel())
+        Search(rememberNavController(), viewModel(), viewModel())
     }
 }
